@@ -33,15 +33,30 @@ android {
 }
 
 dependencies {
+    // Firebase BOM to manage all Firebase versions
+    implementation(platform("com.google.firebase:firebase-bom:33.4.0"))
 
-    implementation(libs.appcompat)
-    implementation(libs.material)
-    implementation(libs.activity)
-    implementation(libs.constraintlayout)
-    implementation(libs.firebase.auth)
+    // Firebase Authentication library
+    implementation("com.google.firebase:firebase-auth")
+
+    // Firebase Analytics and Firestore, if applicable
+    implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-firestore")
+
+    // Other dependencies (AndroidX, UI components, etc.)
     implementation(libs.navigation.fragment)
     implementation(libs.navigation.ui)
+    implementation(libs.material)
+    implementation(libs.appcompat)
+    implementation(libs.activity)
+    implementation(libs.constraintlayout)
+    implementation(libs.firebase.database)
+
+    // Testing dependencies
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
 }
+
+// Apply the Google Services plugin at the end of the file
+apply(plugin = "com.google.gms.google-services")
