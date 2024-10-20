@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1023111175253",
+    "project_id": "media-player-2a659",
+    "storage_bucket": "media-player-2a659.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1023111175253:android:9b0b162489a879a3fa48dc",
+        "android_client_info": {
+          "package_name": "com.tdtu.my_music_player"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB6Cjtm6rSpJMAJU36e54nXDkSazQMG8UM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
