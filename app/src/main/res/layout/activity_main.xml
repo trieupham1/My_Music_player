@@ -18,7 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:layout_above="@id/bottom_navigation"
-        android:background="@android:color/white"
+        android:background="@android:color/darker_gray"
         android:padding="8dp"
         android:visibility="gone">
 
@@ -81,7 +81,7 @@
             android:layout_toStartOf="@id/btn_next"
             android:layout_marginEnd="16dp"
             android:layout_centerVertical="true"
-            android:src="@drawable/ic_play"
+            android:src="@drawable/ic_player"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Play/Pause" />
 
@@ -104,7 +104,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="@android:color/white"
+        android:background="@color/good"
+        app:itemIconTint="@color/tab_icon_color"
+        app:itemTextColor="@color/tab_icon_color"
         app:menu="@menu/bottom_nav_menu" />
 
 </RelativeLayout>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/navigation_home">
+
+    <!-- Home Fragment -->
+    <fragment
+        android:id="@+id/navigation_home"
+        android:name="com.example.media_player.HomeFragment"
+        android:label="Home"
+        tools:layout="@layout/fragment_home" />
+    <!-- Player Fragment -->
+    <fragment
+        android:id="@+id/navigation_play"
+        android:name="com.example.media_player.PlayFragment"
+        android:label="Player"
+        tools:layout="@layout/fragment_play" />
+
+    <!-- Library Fragment -->
+    <fragment
+        android:id="@+id/navigation_search"
+        android:name="com.example.media_player.SearchFragment"
+        android:label="Search"
+        tools:layout="@layout/fragment_search" />
+
+    <fragment
+        android:id="@+id/navigation_profile"
+        android:name="com.example.media_player.ProfileFragment"
+        android:label="Profile"
+        tools:layout="@layout/activity_profile" />
+
+    <!-- Playlist Fragment -->
+
+    <fragment
+        android:id="@+id/navigation_playlist"
+        android:name="com.example.media_player.PlaylistFragment"
+        android:label="Playlist"
+        tools:layout="@layout/fragment_playlist" />
+    <!-- Profile Fragment -->
+</navigation>

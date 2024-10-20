@@ -1,0 +1,64 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FDCCD4"> <!-- Light pink background -->
+
+    <!-- Container for Search Bar and Add Song Section -->
+    <LinearLayout
+        android:id="@+id/top_section"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:layout_alignParentTop="true">
+
+        <!-- Search Bar -->
+        <EditText
+            android:id="@+id/searchEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Search Song"
+            android:inputType="text"
+            android:layout_marginBottom="8dp"
+            android:background="@android:color/white" />
+
+        <!-- Add Song to Playlist -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="8dp">
+
+            <EditText
+                android:id="@+id/newSongEditText"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:hint="Enter song name"
+                android:inputType="text"
+                android:textColor="#000000"
+                android:textColorHint="@android:color/darker_gray" />
+
+            <Button
+                android:id="@+id/addButton"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:text="Add"
+                android:background="#FDCCD4"
+                android:minWidth="64dp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- ListView for Songs in Library -->
+    <ListView
+        android:id="@+id/listView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/top_section"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="8dp"
+        android:layout_margin="8dp"
+        android:cacheColorHint="@android:color/transparent"
+        android:background="@android:color/white" />
+
+</RelativeLayout>

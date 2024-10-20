@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Sorting Options -->
+    <string-array name="sort_options">
+        <item>Title (Alphabetical)</item>
+        <item>Recently Added</item>
+    </string-array>
+
+    <!-- Filtering Options -->
+    <string-array name="filter_options">
+        <item>All</item>
+        <item>Genre</item>
+        <item>Artist</item>
+    </string-array>
+</resources>
