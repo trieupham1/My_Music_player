@@ -5,7 +5,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp"
-    android:gravity="center">
+    android:gravity="center"
+    android:background="@color/black">
 
     <!-- Email Input -->
     <EditText
@@ -13,7 +14,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Email"
-        android:inputType="textEmailAddress" />
+        android:inputType="textEmailAddress"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/rounded_edittext_background"
+        android:textColor="@android:color/white"
+        android:textColorHint="@android:color/white"
+        android:padding="12dp"/>
 
     <!-- Password Input -->
     <EditText
@@ -22,14 +28,22 @@
         android:layout_height="wrap_content"
         android:hint="Password"
         android:inputType="textPassword"
-        android:layout_marginTop="8dp" />
+        android:layout_marginTop="16dp"
+        android:background="@drawable/rounded_edittext_background"
+        android:textColor="@android:color/white"
+        android:textColorHint="@android:color/white"
+        android:padding="12dp" />
 
     <!-- Login Button -->
     <Button
         android:id="@+id/loginButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Login" />
+        android:text="Login"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/rounded_button_background"
+        android:textColor="@android:color/white"
+        />
 
     <!-- Register Button -->
     <Button
@@ -37,6 +51,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Register"
-        android:layout_marginTop="8dp"/>
+        android:layout_marginTop="16dp"
+        android:background="@drawable/rounded_button_background"
+        android:textColor="@android:color/white"
+        />
 
 </LinearLayout>

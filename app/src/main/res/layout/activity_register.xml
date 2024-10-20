@@ -5,7 +5,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="24dp"
-    android:gravity="center">
+    android:gravity="center"
+    android:background="@color/black">
 
     <!-- Username Input -->
     <EditText
@@ -14,7 +15,11 @@
         android:layout_height="wrap_content"
         android:hint="Username"
         android:inputType="textPersonName"
-        android:layout_marginBottom="8dp"/>
+        android:layout_marginTop="16dp"
+        android:background="@drawable/rounded_edittext_background"
+        android:textColor="@android:color/white"
+        android:textColorHint="@android:color/white"
+        android:padding="12dp"/>
 
     <!-- Email Input -->
     <EditText
@@ -23,7 +28,11 @@
         android:layout_height="wrap_content"
         android:hint="Email"
         android:inputType="textEmailAddress"
-        android:layout_marginBottom="8dp"/>
+        android:layout_marginTop="16dp"
+        android:background="@drawable/rounded_edittext_background"
+        android:textColor="@android:color/white"
+        android:textColorHint="@android:color/white"
+        android:padding="12dp"/>
 
     <!-- Password Input -->
     <EditText
@@ -32,13 +41,21 @@
         android:layout_height="wrap_content"
         android:hint="Password"
         android:inputType="textPassword"
-        android:layout_marginBottom="16dp"/>
+        android:layout_marginTop="16dp"
+        android:background="@drawable/rounded_edittext_background"
+        android:textColor="@android:color/white"
+        android:textColorHint="@android:color/white"
+        android:padding="12dp"/>
 
     <!-- Register Button -->
     <Button
         android:id="@+id/registerButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Register"/>
+        android:text="Register"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/rounded_button_background"
+        android:textColor="@android:color/white"
+        />
 
 </LinearLayout>
