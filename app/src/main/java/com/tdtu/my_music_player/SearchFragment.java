@@ -140,11 +140,3 @@ public class SearchFragment extends Fragment {
         }
     }
 }
-// Classified Music:
-// Kpop: "EYES, NOSE, LIPS", "Still With You", "OMG"
-// US&UK: "Die With A Smile", "Blinding Lights", "Sunflower"
-// Vpop: "Đừng Làm Trái Tim Anh Đau", "HÃY TRAO CHO ANH", "Chạy Ngay Đi"
-// Japanese: "NIGHT DANCER", "Odoriko (踊り子)", "Tokyo Flash (東京フラッシュ)"
-// Travis Scott: "Highest in the Room"
-// Justin Bieber: "Yummy", "Peaches"
-// Rock: "Numb", "Creep"

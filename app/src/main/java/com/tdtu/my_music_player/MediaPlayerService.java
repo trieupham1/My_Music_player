@@ -12,7 +12,7 @@ public class MediaPlayerService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        mediaPlayer = MediaPlayer.create(this, R.raw.first);
+        mediaPlayer = MediaPlayer.create(this, R.raw.vpop1);
         mediaPlayer.setLooping(true); // Loop for background playback
     }
 
