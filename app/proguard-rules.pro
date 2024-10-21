@@ -1,21 +1,54 @@
-# Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+# Keep Activities, Services, and Fragments to avoid runtime issues
+-keep class * extends android.app.Activity
+-keep class * extends android.app.Service
+-keep class * extends android.app.Fragment
+-keep class * extends androidx.fragment.app.Fragment
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+# Keep Firebase model classes (useful for serialization/deserialization)
+-keepclassmembers class * {
+    @com.google.firebase.firestore.PropertyName <fields>;
+}
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+# Keep methods and classes annotated with @Keep to prevent them from being removed or obfuscated
+-keep @androidx.annotation.Keep class * {*;}
+-keepclassmembers class * {
+    @androidx.annotation.Keep <fields>;
+}
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# Keep Parcelable and Serializable classes
+-keepclassmembers class * implements android.os.Parcelable {
+    static ** CREATOR;
+}
+-keepclassmembers class * implements java.io.Serializable {
+    static final long serialVersionUID;
+}
+
+# Keep Retrofit interfaces to avoid runtime issues during network calls
+-keep interface com.example.api.** { *; }
+
+# Keep GSON serialized model classes
+-keep class com.example.model.** { *; }
+
+# Keep ViewModel classes for Android Architecture Components
+-keep class * extends androidx.lifecycle.ViewModel {
+    <init>(...);
+}
+
+# Strip out log statements for smaller APKs
+-assumenosideeffects class android.util.Log {
+    public static *** d(...);
+    public static *** v(...);
+    public static *** i(...);
+    public static *** w(...);
+    public static *** e(...);
+}
+
+# Avoid warnings for third-party libraries
+-dontwarn com.google.**
+-dontwarn retrofit2.**
+-dontwarn okio.**
+
+# Keep Firebase classes and attributes accessed via reflection
+-keepattributes Signature
+-keep class com.google.firebase.** { *; }
+-keep class com.google.android.gms.** { *; }
