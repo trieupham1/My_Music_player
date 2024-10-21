@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
     // Firebase Authentication
     private FirebaseAuth auth;
 
-    // Listener to sync PlayFragment with mini-player
+    // Listener to sync PlayFragment with the mini-player
     private OnPlayerStatusChangedListener onPlayerStatusChangedListener;
 
     @Override
@@ -37,10 +37,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Initialize FirebaseAuth
+        // Initialize Firebase Authentication
         auth = FirebaseAuth.getInstance();
-
-        // If user is not logged in, redirect to authentication view
         if (auth.getCurrentUser() == null) {
             Intent intent = new Intent(MainActivity.this, AuthActivity.class);
             startActivity(intent);
@@ -48,7 +46,54 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        // Initialize Navigation components
+        // Initialize Navigation Components
+        initializeNavigation();
+
+        // Initialize Media Player Panel Views
+        initializePlayerViews();
+
+        // Set up MediaPlayerManager
+        mediaPlayerManager = MediaPlayerManager.getInstance();
+
+        // Check for any song passed via intent to play
+        handleIntent(getIntent());
+
+        // Set up Play/Pause button in the mini-player
+        btnPlayPause.setOnClickListener(v -> {
+            mediaPlayerManager.pauseOrResumeSong();
+            updateMiniPlayerUI();
+            notifyPlayFragment();
+        });
+
+        // Set up Next button in the mini-player
+        btnNext.setOnClickListener(v -> {
+            playNextSong();
+            notifyPlayFragment();
+        });
+
+        // Set up Previous button in the mini-player
+        btnPrevious.setOnClickListener(v -> {
+            playPreviousSong();
+            notifyPlayFragment();
+        });
+    }
+
+    // Handle the intent passed from other activities (like playing a song)
+    private void handleIntent(Intent intent) {
+        if (intent != null && intent.getBooleanExtra("playSong", false)) {
+            String songTitle = intent.getStringExtra("songTitle");
+            String artistName = intent.getStringExtra("artistName");
+            int songResource = intent.getIntExtra("songResource", -1);
+            int albumCoverResource = intent.getIntExtra("albumCoverResource", -1);
+
+            if (songResource != -1) {
+                playSelectedSong(songTitle, artistName, songResource, albumCoverResource);
+            }
+        }
+    }
+
+    // Initialize Navigation Components
+    private void initializeNavigation() {
         BottomNavigationView navView = findViewById(R.id.bottom_navigation);
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.nav_host_fragment);
@@ -57,39 +102,13 @@ public class MainActivity extends AppCompatActivity {
             NavController navController = navHostFragment.getNavController();
             AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                     R.id.navigation_home, R.id.navigation_play, R.id.navigation_search,
-                    R.id.navigation_profile, R.id.navigation_playlist)
-                    .build();
+                    R.id.navigation_profile, R.id.navigation_playlist).build();
             NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
             NavigationUI.setupWithNavController(navView, navController);
         }
-
-        // Initialize Media Player Panel Views
-        initializePlayerViews();
-
-        // Set up MediaPlayerManager
-        mediaPlayerManager = MediaPlayerManager.getInstance();
-
-        // Play/Pause Button functionality for the mini-player
-        btnPlayPause.setOnClickListener(v -> {
-            mediaPlayerManager.pauseOrResumeSong();
-            updateMiniPlayerUI();
-            notifyPlayFragment();
-        });
-
-        // Next Button functionality
-        btnNext.setOnClickListener(v -> {
-            playNextSong();
-            notifyPlayFragment();
-        });
-
-        // Previous Button functionality
-        btnPrevious.setOnClickListener(v -> {
-            playPreviousSong();
-            notifyPlayFragment();
-        });
     }
 
-    // Function to initialize the media player views
+    // Initialize the media player views in the mini-player panel
     private void initializePlayerViews() {
         bottomPlayerPanel = findViewById(R.id.bottom_player_panel);
         tvSongTitle = findViewById(R.id.tv_song_title);
@@ -100,31 +119,35 @@ public class MainActivity extends AppCompatActivity {
         imgAlbumCover = findViewById(R.id.img_album_cover);
     }
 
+    // Play the selected song and update the UI
     public void playSelectedSong(String songTitle, String artistName, int songResource, int albumCoverResource) {
         mediaPlayerManager.playSong(this, songResource, songTitle, artistName, albumCoverResource);
         updateMiniPlayerUI();
         notifyPlayFragment();
     }
 
+    // Play the next song
     private void playNextSong() {
         mediaPlayerManager.playNextSong(this);
         updateMiniPlayerUI();
         notifyPlayFragment();
     }
 
+    // Play the previous song
     private void playPreviousSong() {
         mediaPlayerManager.playPreviousSong(this);
         updateMiniPlayerUI();
         notifyPlayFragment();
     }
 
+    // Update the mini-player UI with the current song details
     public void updateMiniPlayerUI() {
         if (mediaPlayerManager.isPlaying()) {
             tvSongTitle.setText(mediaPlayerManager.getCurrentSongTitle());
             tvArtistName.setText(mediaPlayerManager.getCurrentArtistName());
             imgAlbumCover.setImageResource(mediaPlayerManager.getCurrentAlbumCoverResource());
             btnPlayPause.setImageResource(R.drawable.ic_pause);
-            bottomPlayerPanel.setVisibility(View.VISIBLE);
+            bottomPlayerPanel.setVisibility(View.VISIBLE); // Make mini-player visible
         } else {
             btnPlayPause.setImageResource(R.drawable.ic_play);
         }
@@ -149,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // Interface to notify the PlayFragment
+    // Interface to notify the PlayFragment of player status changes
     public interface OnPlayerStatusChangedListener {
         void onPlayerStatusChanged();
     }

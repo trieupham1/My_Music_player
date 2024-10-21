@@ -3,8 +3,10 @@ package com.tdtu.my_music_player;
 import android.content.Context;
 import android.media.MediaPlayer;
 import android.os.Build;
-
 import androidx.annotation.RequiresApi;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MediaPlayerManager {
 
@@ -13,19 +15,44 @@ public class MediaPlayerManager {
     private String currentSongTitle = "";
     private String currentArtistName = "";
     private int currentAlbumCoverResource;
-    private int currentSongResource;  // Store the current song's resource ID
+    private int currentSongResource;
     private int currentSongIndex = 0;
 
-    private int[] songResources = {R.raw.first, R.raw.second, R.raw.fein, R.raw.khutaosong, R.raw.laudaitinhai};
-    private String[] songTitles = {"First Song", "Second Song", "Fein Song", "Khu tao sống", "Lâu Đài tình ái"};
-    private String[] artistNames = {"Artist One", "Artist Two", "Travis Scott", "Wowy", "Đàm Vĩnh Hưng"};
-    private int[] albumCoverResources = {
-            R.drawable.first,
-            R.drawable.second,
-            R.drawable.fein,
-            R.drawable.khutaosong,
-            R.drawable.damvinhhung
+    // Song data arrays
+    private int[] songResources = {
+            R.raw.kpop1, R.raw.kpop2, R.raw.kpop3, R.raw.usuk1, R.raw.usuk2,
+            R.raw.usuk3, R.raw.vpop1, R.raw.vpop2, R.raw.vpop3, R.raw.jpop1,
+            R.raw.jpop2, R.raw.jpop3, R.raw.travis,R.raw.fein, R.raw.justin, R.raw.justin2,
+            R.raw.rock1, R.raw.rock2,R.raw.laudaitinhai,R.raw.khutaosong
     };
+
+    private String[] songTitles = {
+            "EYES, NOSE, LIPS", "Still With You", "OMG", "Die With A Smile", "Blinding Lights",
+            "Sunflower", "Đừng Làm Trái Tim Anh Đau", "HÃY TRAO CHO ANH", "Chạy Ngay Đi",
+            "NIGHT DANCER", "Odoriko (踊り子)", "Tokyo Flash (東京フラッシュ)",
+            "Highest in the Room", "Fein","Yummy", "Peaches", "Numb", "Creep","Lâu Đài Tình Ái","Khu Tao Sống"// 17 songs
+    };
+
+    private String[] artistNames = {
+            "TAEYANG", "Jungkook", "NewJeans", "Bruno Mars & Lady Gaga", "The Weeknd",
+            "Post Malone", "Sơn Tùng M-TP", "Sơn Tùng M-TP", "Sơn Tùng M-TP", "Imase",
+            "Vaundy", "Vaundy", "Travis Scott","Travis Scott","Justin Bieber", "Justin Bieber",
+            "Linkin Park", "Radiohead","Đàm Vĩnh Hưng","Wowy","Travis Scott" // 17 artists
+    };
+
+    private int[] albumCoverResources = {
+            R.drawable.kpop1, R.drawable.kpop2, R.drawable.kpop3, R.drawable.usuk1, R.drawable.usuk2,
+            R.drawable.usuk3, R.drawable.vpop1, R.drawable.vpop2, R.drawable.vpop3, R.drawable.japan1,
+            R.drawable.japan2, R.drawable.japan3, R.drawable.travis,R.drawable.fein, R.drawable.justin2,
+            R.drawable.justin3, R.drawable.rock1, R.drawable.rock2,R.drawable.laudaitinhai,R.drawable.khutaosong // 17 album covers
+    };
+
+    private String[] genres = {
+            "R&B", "R&B", "Pop", "Pop", "Pop", "Pop", "Pop", "Pop", "Pop",
+            "R&B", "Japanese", "Japanese", "Rap","Rap", "Pop", "Pop", "Rock", "Rock","Pop","Rap"// 17 genres
+    };
+
+
 
     private MediaPlayerManager() {
     }
@@ -36,6 +63,98 @@ public class MediaPlayerManager {
         }
         return instance;
     }
+    public List<Song> getSongsByArtist(String artist) {
+        List<Song> filteredSongs = new ArrayList<>();
+
+        // Retrieve data arrays
+        String[] songTitles = getSongTitles();
+        String[] artistNames = getArtistNames();
+        int[] songResources = getSongResources();
+        int[] albumCoverResources = getAlbumCoverResources();
+
+        int totalSongs = Math.min(
+                Math.min(songTitles.length, artistNames.length),
+                Math.min(songResources.length, albumCoverResources.length)
+        );
+
+        // Filter songs by the given artist
+        for (int i = 0; i < totalSongs; i++) {
+            if (artistNames[i].equalsIgnoreCase(artist)) {
+                filteredSongs.add(new Song(
+                        songTitles[i], artistNames[i], songResources[i], albumCoverResources[i]
+                ));
+            }
+        }
+
+        return filteredSongs;
+    }
+    public List<Song> getSongsByGenre(String genre) {
+        List<Song> filteredSongs = new ArrayList<>();
+
+        int totalSongs = Math.min(songTitles.length, Math.min(artistNames.length, songResources.length));
+
+        for (int i = 0; i < totalSongs; i++) {
+            if (genres[i].equalsIgnoreCase(genre)) {
+                filteredSongs.add(new Song(
+                        songTitles[i],
+                        artistNames[i],
+                        songResources[i],
+                        albumCoverResources[i]
+                ));
+            }
+        }
+        return filteredSongs;
+    }
+
+    public List<Song> getSongsByCategory(String category) {
+        List<Song> filteredSongs = new ArrayList<>();
+
+        String[] songTitles = getSongTitles();
+        String[] artistNames = getArtistNames();
+        int[] songResources = getSongResources();
+        int[] albumCoverResources = getAlbumCoverResources();
+
+        int totalSongs = Math.min(songTitles.length, Math.min(artistNames.length, songResources.length));
+
+        for (int i = 0; i < totalSongs; i++) {
+            if (isSongInCategory(category, songTitles[i])) {
+                filteredSongs.add(new Song(songTitles[i], artistNames[i], songResources[i], albumCoverResources[i]));
+            }
+        }
+        return filteredSongs;
+    }
+
+    private boolean isSongInCategory(String category, String songTitle) {
+        switch (category) {
+            case "Kpop":
+                return isKpopSong(songTitle);
+            case "US&UK":
+                return isUSUKSong(songTitle);
+            case "Vpop":
+                return isVpopSong(songTitle);
+            case "Japanese songs":
+                return isJapaneseSong(songTitle);
+            default:
+                return false;
+        }
+    }
+
+    private boolean isKpopSong(String title) {
+        return title.equals("EYES, NOSE, LIPS") || title.equals("Still With You") || title.equals("OMG");
+    }
+
+    private boolean isUSUKSong(String title) {
+        return title.equals("Die With A Smile") || title.equals("Blinding Lights") || title.equals("Sunflower");
+    }
+
+    private boolean isVpopSong(String title) {
+        return title.equals("Đừng Làm Trái Tim Anh Đau") || title.equals("HÃY TRAO CHO ANH") || title.equals("Chạy Ngay Đi")||title.equals("Lâu Đài Tình Ái")||title.equals("Khu Tao Sống");
+    }
+
+    private boolean isJapaneseSong(String title) {
+        return title.equals("NIGHT DANCER") || title.equals("Odoriko (踊り子)") || title.equals("Tokyo Flash (東京フラッシュ)");
+    }
+
 
     public void playSong(Context context, int songResource, String songTitle, String artistName, int albumCoverResource) {
         if (mediaPlayer != null) {
@@ -46,11 +165,13 @@ public class MediaPlayerManager {
         currentSongTitle = songTitle;
         currentArtistName = artistName;
         currentAlbumCoverResource = albumCoverResource;
-        currentSongResource = songResource;  // Update the current song resource
+        currentSongResource = songResource;
 
         mediaPlayer = MediaPlayer.create(context, songResource);
+        mediaPlayer.setOnCompletionListener(mp -> stopSong());  // Stop player when song ends
         mediaPlayer.start();
     }
+
 
     public int getCurrentAlbumCoverResource() {
         return currentAlbumCoverResource;

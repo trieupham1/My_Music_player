@@ -1,23 +1,23 @@
 package com.tdtu.my_music_player;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class HomeFragment extends Fragment {
 
     private RecyclerView categoriesRecyclerView, artistRecyclerView, genreRecyclerView;
-    private CategoriesAdapter categoriesAdapter, artistAdapter, genreAdapter;
+    private CategoriesAdapter categoriesAdapter, genreAdapter;
+    private ArtistAdapter artistAdapter;
     private List<String> categoriesList, artistList, genreList;
     private List<Integer> categoryIcons, artistIcons, genreIcons;
 
@@ -36,14 +36,17 @@ public class HomeFragment extends Fragment {
         categoriesList.add("Vpop");
         categoriesList.add("Japanese songs");
 
-        // Add icons for each category
         categoryIcons = new ArrayList<>();
         categoryIcons.add(R.drawable.kpop);
         categoryIcons.add(R.drawable.usuk);
         categoryIcons.add(R.drawable.vpop);
         categoryIcons.add(R.drawable.japan);
 
-        categoriesAdapter = new CategoriesAdapter(categoriesList, categoryIcons, getContext());
+        categoriesAdapter = new CategoriesAdapter(categoriesList, categoryIcons, getContext(), category -> {
+            Intent intent = new Intent(getContext(), MusicCategoryActivity.class);
+            intent.putExtra("categoryName", category);
+            startActivity(intent);
+        });
         categoriesRecyclerView.setAdapter(categoriesAdapter);
 
         // Initialize artist RecyclerView
@@ -56,14 +59,17 @@ public class HomeFragment extends Fragment {
         artistList.add("Sơn Tùng M-TP");
         artistList.add("Vaundy");
 
-        // Add icons for each artist
         artistIcons = new ArrayList<>();
         artistIcons.add(R.drawable.travis);
         artistIcons.add(R.drawable.justin);
         artistIcons.add(R.drawable.son_tung);
         artistIcons.add(R.drawable.vaundy);
 
-        artistAdapter = new CategoriesAdapter(artistList, artistIcons, getContext());
+        artistAdapter = new ArtistAdapter(artistList, artistIcons, getContext(), artist -> {
+            Intent intent = new Intent(getContext(), ArtistSongsActivity.class);
+            intent.putExtra("artistName", artist);
+            startActivity(intent);
+        });
         artistRecyclerView.setAdapter(artistAdapter);
 
         // Initialize genre RecyclerView
@@ -76,14 +82,17 @@ public class HomeFragment extends Fragment {
         genreList.add("R&B");
         genreList.add("Rap");
 
-        // Add icons for each genre
         genreIcons = new ArrayList<>();
         genreIcons.add(R.drawable.pop);
         genreIcons.add(R.drawable.rock);
         genreIcons.add(R.drawable.rnb);
         genreIcons.add(R.drawable.rap);
 
-        genreAdapter = new CategoriesAdapter(genreList, genreIcons, getContext());
+        genreAdapter = new CategoriesAdapter(genreList, genreIcons, getContext(), genre -> {
+            Intent intent = new Intent(getContext(), GenreSongsActivity.class);
+            intent.putExtra("genreName", genre);
+            startActivity(intent);
+        });
         genreRecyclerView.setAdapter(genreAdapter);
 
         return view;

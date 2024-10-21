@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder> {
+
     private List<Song> songs;
     private OnSongClickListener listener;
     private Context context;
@@ -38,6 +39,8 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
     public void onBindViewHolder(@NonNull SongViewHolder holder, int position) {
         Song song = songs.get(position);
         holder.itemTextView.setText(song.getTitle());
+
+        // Handle item click event
         holder.itemView.setOnClickListener(v -> listener.onSongClick(song));
     }
 
@@ -49,7 +52,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
     static class SongViewHolder extends RecyclerView.ViewHolder {
         TextView itemTextView;
 
-        SongViewHolder(View itemView) {
+        public SongViewHolder(View itemView) {
             super(itemView);
             itemTextView = itemView.findViewById(R.id.itemTextView);
         }

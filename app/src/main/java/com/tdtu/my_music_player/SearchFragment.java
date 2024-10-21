@@ -25,15 +25,46 @@ public class SearchFragment extends Fragment {
     private ListView listView;
     private ListView searchResultsListView;
 
-    private String[] songTitles = {"First Song", "Second Song", "Fein Song", "Khu tao sống", "Lâu Đài tình ái"};
-    private String[] artistNames = {"Artist One", "Artist Two", "Travis Scott", "Wowy", "Đàm Vĩnh Hưng"};
-    private int[] songResources = {R.raw.first, R.raw.second, R.raw.fein, R.raw.khutaosong, R.raw.laudaitinhai};
+    private String[] songTitles = {
+            "EYES, NOSE, LIPS", "Still With You", "OMG",
+            "Die With A Smile", "Blinding Lights", "Sunflower",
+            "Đừng Làm Trái Tim Anh Đau", "HÃY TRAO CHO ANH", "Chạy Ngay Đi",
+            "NIGHT DANCER", "Odoriko (踊り子)", "Tokyo Flash (東京フラッシュ)",
+            "Highest in the Room", "Fein","Yummy", "Peaches",
+            "Numb", "Creep",
+            "Lâu Đài Tình Ái",
+            "Khu Tao Sống"
+
+    };
+    private String[] artistNames = {
+            "Taeyang", "Jungkook", "NewJeans",
+            "Bruno Mars & Lady Gaga", "The Weeknd", "Post Malone",
+            "Sơn Tùng M-TP", "Sơn Tùng M-TP ft. Snoop Dogg", "Sơn Tùng M-TP",
+            "Imase", "Vaundy", "Vaundy",
+            "Travis Scott", "Travis Scott","Justin Bieber", "Justin Bieber",
+            "Linkin Park", "Radiohead",
+            "Đàm Vĩnh Hưng",
+            "Wowy"
+    };
+    private int[] songResources = {
+            R.raw.kpop1, R.raw.kpop2, R.raw.kpop3,
+            R.raw.usuk1, R.raw.usuk2, R.raw.usuk3,
+            R.raw.vpop1, R.raw.vpop2, R.raw.vpop3,
+            R.raw.jpop1, R.raw.jpop2, R.raw.jpop3,
+            R.raw.travis,R.raw.fein ,R.raw.justin, R.raw.justin2,
+            R.raw.rock1, R.raw.rock2,
+            R.raw.laudaitinhai,
+            R.raw.khutaosong
+    };
     private int[] albumCoverResources = {
-            R.drawable.first,
-            R.drawable.second,
-            R.drawable.fein,
-            R.drawable.khutaosong,
-            R.drawable.damvinhhung
+            R.drawable.kpop1, R.drawable.kpop2, R.drawable.kpop3,
+            R.drawable.usuk1, R.drawable.usuk2, R.drawable.usuk3,
+            R.drawable.vpop1, R.drawable.vpop2, R.drawable.vpop3,
+            R.drawable.japan, R.drawable.japan2, R.drawable.japan3,
+            R.drawable.travis, R.drawable.fein,R.drawable.justin2, R.drawable.justin3,
+            R.drawable.rock1, R.drawable.rock2,
+            R.drawable.laudaitinhai,
+            R.drawable.khutaosong
     };
 
     private List<String> searchResults;
@@ -109,3 +140,11 @@ public class SearchFragment extends Fragment {
         }
     }
 }
+// Classified Music:
+// Kpop: "EYES, NOSE, LIPS", "Still With You", "OMG"
+// US&UK: "Die With A Smile", "Blinding Lights", "Sunflower"
+// Vpop: "Đừng Làm Trái Tim Anh Đau", "HÃY TRAO CHO ANH", "Chạy Ngay Đi"
+// Japanese: "NIGHT DANCER", "Odoriko (踊り子)", "Tokyo Flash (東京フラッシュ)"
+// Travis Scott: "Highest in the Room"
+// Justin Bieber: "Yummy", "Peaches"
+// Rock: "Numb", "Creep"
