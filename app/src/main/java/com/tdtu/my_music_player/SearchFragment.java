@@ -47,20 +47,20 @@ public class SearchFragment extends Fragment {
             "Wowy"
     };
     private int[] songResources = {
-            R.raw.kpop1, R.raw.kpop2, R.raw.kpop3,
-            R.raw.usuk1, R.raw.usuk2, R.raw.usuk3,
-            R.raw.vpop1, R.raw.vpop2, R.raw.vpop3,
-            R.raw.jpop1, R.raw.jpop2, R.raw.jpop3,
+            R.raw.kpop1, R.raw.kpop3,
+            R.raw.usuk2, R.raw.usuk3,
+            R.raw.vpop1, R.raw.vpop3,
+            R.raw.jpop1, R.raw.jpop2,
             R.raw.travis,R.raw.fein ,R.raw.justin, R.raw.justin2,
             R.raw.rock1, R.raw.rock2,
             R.raw.laudaitinhai,
             R.raw.khutaosong
     };
     private int[] albumCoverResources = {
-            R.drawable.kpop1, R.drawable.kpop2, R.drawable.kpop3,
-            R.drawable.usuk1, R.drawable.usuk2, R.drawable.usuk3,
-            R.drawable.vpop1, R.drawable.vpop2, R.drawable.vpop3,
-            R.drawable.japan, R.drawable.japan2, R.drawable.japan3,
+            R.drawable.kpop1, R.drawable.kpop3,
+            R.drawable.usuk2, R.drawable.usuk3,
+            R.drawable.vpop1, R.drawable.vpop3,
+            R.drawable.japan, R.drawable.japan2,
             R.drawable.travis, R.drawable.fein,R.drawable.justin2, R.drawable.justin3,
             R.drawable.rock1, R.drawable.rock2,
             R.drawable.laudaitinhai,
