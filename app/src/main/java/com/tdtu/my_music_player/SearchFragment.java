@@ -26,8 +26,8 @@ public class SearchFragment extends Fragment {
     private ListView searchResultsListView;
 
     private String[] songTitles = {
-            "EYES, NOSE, LIPS", "Still With You", "OMG",
-            "Die With A Smile", "Blinding Lights", "Sunflower",
+            "EYES, NOSE, LIPS", "OMG",
+             "Blinding Lights", "Sunflower",
             "Đừng Làm Trái Tim Anh Đau", "HÃY TRAO CHO ANH", "Chạy Ngay Đi",
             "NIGHT DANCER", "Odoriko (踊り子)", "Tokyo Flash (東京フラッシュ)",
             "Highest in the Room", "Fein","Yummy", "Peaches",
@@ -37,8 +37,8 @@ public class SearchFragment extends Fragment {
 
     };
     private String[] artistNames = {
-            "Taeyang", "Jungkook", "NewJeans",
-            "Bruno Mars & Lady Gaga", "The Weeknd", "Post Malone",
+            "Taeyang", "NewJeans",
+             "The Weeknd", "Post Malone",
             "Sơn Tùng M-TP", "Sơn Tùng M-TP ft. Snoop Dogg", "Sơn Tùng M-TP",
             "Imase", "Vaundy", "Vaundy",
             "Travis Scott", "Travis Scott","Justin Bieber", "Justin Bieber",
@@ -47,8 +47,8 @@ public class SearchFragment extends Fragment {
             "Wowy"
     };
     private int[] songResources = {
-            R.raw.kpop1, R.raw.kpop2, R.raw.kpop3,
-            R.raw.usuk1, R.raw.usuk2, R.raw.usuk3,
+            R.raw.kpop1, R.raw.kpop3,
+            R.raw.usuk2, R.raw.usuk3,
             R.raw.vpop1, R.raw.vpop2, R.raw.vpop3,
             R.raw.jpop1, R.raw.jpop2, R.raw.jpop3,
             R.raw.travis,R.raw.fein ,R.raw.justin, R.raw.justin2,
@@ -57,8 +57,8 @@ public class SearchFragment extends Fragment {
             R.raw.khutaosong
     };
     private int[] albumCoverResources = {
-            R.drawable.kpop1, R.drawable.kpop2, R.drawable.kpop3,
-            R.drawable.usuk1, R.drawable.usuk2, R.drawable.usuk3,
+            R.drawable.kpop1, R.drawable.kpop3,
+            R.drawable.usuk2, R.drawable.usuk3,
             R.drawable.vpop1, R.drawable.vpop2, R.drawable.vpop3,
             R.drawable.japan, R.drawable.japan2, R.drawable.japan3,
             R.drawable.travis, R.drawable.fein,R.drawable.justin2, R.drawable.justin3,

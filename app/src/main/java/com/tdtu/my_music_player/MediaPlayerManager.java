@@ -20,35 +20,35 @@ public class MediaPlayerManager {
 
     // Song data arrays
     private int[] songResources = {
-            R.raw.kpop1, R.raw.kpop2, R.raw.kpop3, R.raw.usuk1, R.raw.usuk2,
+            R.raw.kpop1, R.raw.kpop3, R.raw.usuk2,
             R.raw.usuk3, R.raw.vpop1, R.raw.vpop2, R.raw.vpop3, R.raw.jpop1,
             R.raw.jpop2, R.raw.jpop3, R.raw.travis,R.raw.fein, R.raw.justin, R.raw.justin2,
             R.raw.rock1, R.raw.rock2,R.raw.laudaitinhai,R.raw.khutaosong
     };
 
     private String[] songTitles = {
-            "EYES, NOSE, LIPS", "Still With You", "OMG", "Die With A Smile", "Blinding Lights",
+            "EYES, NOSE, LIPS", "OMG", "Blinding Lights",
             "Sunflower", "Đừng Làm Trái Tim Anh Đau", "HÃY TRAO CHO ANH", "Chạy Ngay Đi",
             "NIGHT DANCER", "Odoriko (踊り子)", "Tokyo Flash (東京フラッシュ)",
             "Highest in the Room", "Fein","Yummy", "Peaches", "Numb", "Creep","Lâu Đài Tình Ái","Khu Tao Sống"// 17 songs
     };
 
     private String[] artistNames = {
-            "TAEYANG", "Jungkook", "NewJeans", "Bruno Mars & Lady Gaga", "The Weeknd",
+            "TAEYANG", "NewJeans", "The Weeknd",
             "Post Malone", "Sơn Tùng M-TP", "Sơn Tùng M-TP", "Sơn Tùng M-TP", "Imase",
             "Vaundy", "Vaundy", "Travis Scott","Travis Scott","Justin Bieber", "Justin Bieber",
             "Linkin Park", "Radiohead","Đàm Vĩnh Hưng","Wowy","Travis Scott" // 17 artists
     };
 
     private int[] albumCoverResources = {
-            R.drawable.kpop1, R.drawable.kpop2, R.drawable.kpop3, R.drawable.usuk1, R.drawable.usuk2,
+            R.drawable.kpop1, R.drawable.kpop3, R.drawable.usuk2,
             R.drawable.usuk3, R.drawable.vpop1, R.drawable.vpop2, R.drawable.vpop3, R.drawable.japan1,
             R.drawable.japan2, R.drawable.japan3, R.drawable.travis,R.drawable.fein, R.drawable.justin2,
             R.drawable.justin3, R.drawable.rock1, R.drawable.rock2,R.drawable.laudaitinhai,R.drawable.khutaosong // 17 album covers
     };
 
     private String[] genres = {
-            "R&B", "R&B", "Pop", "Pop", "Pop", "Pop", "Pop", "Pop", "Pop",
+            "R&B", "Pop", "Pop", "Pop", "Pop", "Pop", "Pop",
             "R&B", "Japanese", "Japanese", "Rap","Rap", "Pop", "Pop", "Rock", "Rock","Pop","Rap"// 17 genres
     };
 
