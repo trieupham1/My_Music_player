@@ -48,8 +48,8 @@ public class MediaPlayerManager {
     };
 
     private String[] genres = {
-            "R&B", "R&B","Pop","Pop", "Pop", "Pop", "Pop", "Pop", "Pop",
-            "R&B","Japanese", "Japanese", "Rap","Rap", "Pop", "Pop", "Rock", "Rock","Pop","Rap"
+            "R&B","Pop","Pop", "Pop", "Pop", "Pop", "R&B",
+            "Japanese","Rap", "Rap","Pop", "Pop", "Rock", "Rock", "Pop","Rap"
     };
 
 
