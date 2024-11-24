@@ -8,6 +8,28 @@
     android:gravity="center"
     android:background="@color/black">
 
+    <!-- Logo -->
+    <ImageView
+        android:id="@+id/logoImageView"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:src="@drawable/musiclogo"
+        android:contentDescription="App Logo"
+        android:layout_gravity="center"
+        android:layout_marginBottom="24dp" />
+
+    <!-- Quote -->
+    <TextView
+        android:id="@+id/quoteTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Need a place, here is a taste"
+        android:textColor="@android:color/white"
+        android:textSize="18sp"
+        android:fontFamily="sans-serif-light"
+        android:layout_gravity="center"
+        android:layout_marginBottom="24dp" />
+
     <!-- Username Input -->
     <EditText
         android:id="@+id/usernameEditText"
@@ -50,7 +72,7 @@
     <!-- Register Button -->
     <Button
         android:id="@+id/registerButton"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Register"
         android:layout_marginTop="16dp"
