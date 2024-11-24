@@ -23,9 +23,9 @@ import com.tdtu.my_music_player.R;
 
 public class PlayFragment extends Fragment {
 
-    private TextView tvSongTitle, tvArtistName, playbackSpeedText;
+    private TextView tvSongTitle, tvArtistName, playbackSpeedText, tvCurrentTime, tvTotalDuration;
     private ImageButton btnPlayPause, btnNext, btnPrevious;
-    private SeekBar volumeBar, speedBar;
+    private SeekBar volumeBar, speedBar, playbackBar;
     private ImageView imgAlbumCover;
     private MediaPlayerManager mediaPlayerManager;
     private AudioManager audioManager;
@@ -44,6 +44,9 @@ public class PlayFragment extends Fragment {
         btnPrevious = view.findViewById(R.id.btn_previous);
         volumeBar = view.findViewById(R.id.volumeBar);
         speedBar = view.findViewById(R.id.speedBar);
+        playbackBar = view.findViewById(R.id.playbackBar); // Playback progress bar
+        tvCurrentTime = view.findViewById(R.id.tv_current_time); // Current time text
+        tvTotalDuration = view.findViewById(R.id.tv_total_duration); // Total duration text
         playbackSpeedText = view.findViewById(R.id.playback_speed);
         imgAlbumCover = view.findViewById(R.id.img_album_cover);
         btnAddToPlaylist = view.findViewById(R.id.btn_add_to_playlist);
@@ -58,29 +61,23 @@ public class PlayFragment extends Fragment {
         // Set up playback speed control
         setupPlaybackSpeedControl();
 
+        // Set up playback progress control
+        setupPlaybackControl();
+
         // Play/Pause Button
         btnPlayPause.setOnClickListener(v -> {
             mediaPlayerManager.pauseOrResumeSong();
             updateUI();
-            if (getActivity() instanceof MainActivity) {
-                ((MainActivity) getActivity()).updateMiniPlayerUI();
-            }
         });
 
         // Next Button
         btnNext.setOnClickListener(v -> {
             playNextSong();
-            if (getActivity() instanceof MainActivity) {
-                ((MainActivity) getActivity()).updateMiniPlayerUI();
-            }
         });
 
         // Previous Button
         btnPrevious.setOnClickListener(v -> {
             playPreviousSong();
-            if (getActivity() instanceof MainActivity) {
-                ((MainActivity) getActivity()).updateMiniPlayerUI();
-            }
         });
 
         // "Add to Playlist" Button
@@ -138,15 +135,52 @@ public class PlayFragment extends Fragment {
         });
     }
 
+    private void setupPlaybackControl() {
+        playbackBar.setMax(mediaPlayerManager.getTotalDuration());
+
+        playbackBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (fromUser) {
+                    mediaPlayerManager.seekTo(progress); // Seek to selected position
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+        });
+
+        updatePlaybackProgress();
+    }
+
+    private void updatePlaybackProgress() {
+        int currentPosition = mediaPlayerManager.getCurrentPosition();
+        int totalDuration = mediaPlayerManager.getTotalDuration();
+
+        tvCurrentTime.setText(formatTime(currentPosition));
+        tvTotalDuration.setText(formatTime(totalDuration));
+        playbackBar.setMax(totalDuration);
+        playbackBar.setProgress(currentPosition);
+
+        // Schedule periodic updates
+        playbackBar.postDelayed(this::updatePlaybackProgress, 1000);
+    }
+
+    private String formatTime(int milliseconds) {
+        int minutes = (milliseconds / 1000) / 60;
+        int seconds = (milliseconds / 1000) % 60;
+        return String.format("%d:%02d", minutes, seconds);
+    }
+
     private void playNextSong() {
         if (mediaPlayerManager != null) {
             mediaPlayerManager.playNextSong(getContext());
             updateUI();
-
-            // Update mini-player UI in MainActivity
-            if (getActivity() instanceof MainActivity) {
-                ((MainActivity) getActivity()).updateMiniPlayerUI();
-            }
         }
     }
 
@@ -154,11 +188,6 @@ public class PlayFragment extends Fragment {
         if (mediaPlayerManager != null) {
             mediaPlayerManager.playPreviousSong(getContext());
             updateUI();
-
-            // Update mini-player UI in MainActivity
-            if (getActivity() instanceof MainActivity) {
-                ((MainActivity) getActivity()).updateMiniPlayerUI();
-            }
         }
     }
 
@@ -176,9 +205,7 @@ public class PlayFragment extends Fragment {
             playlistManager.addSongToPlaylist(currentSongTitle, currentArtistName, currentSongResource, currentAlbumCoverResource);
             Toast.makeText(getContext(), currentSongTitle + " added to playlist", Toast.LENGTH_SHORT).show();
         }
-
     }
-
 
     private void updateUI() {
         tvSongTitle.setText(mediaPlayerManager.getCurrentSongTitle());

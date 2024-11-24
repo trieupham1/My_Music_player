@@ -263,6 +263,23 @@ public class MediaPlayerManager {
     public int getCurrentSongResource() {
         return currentSongResource;  // Return the resource ID of the current song
     }
+    public int getTotalDuration() {
+        // Return the total duration of the currently playing song
+        return mediaPlayer != null ? mediaPlayer.getDuration() : 0;
+    }
+
+    public int getCurrentPosition() {
+        // Return the current playback position of the song
+        return mediaPlayer != null ? mediaPlayer.getCurrentPosition() : 0;
+    }
+
+    public void seekTo(int position) {
+        // Seek to the specified position in the current song
+        if (mediaPlayer != null) {
+            mediaPlayer.seekTo(position);
+        }
+    }
+
 
     public int findSongIndexByTitle(String songTitle) {
         for (int i = 0; i < songTitles.length; i++) {

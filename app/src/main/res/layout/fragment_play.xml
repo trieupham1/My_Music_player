@@ -46,6 +46,42 @@
             android:layout_gravity="center"
             android:paddingBottom="16dp" />
 
+        <!-- Playback Progress Bar -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="16dp">
+
+            <TextView
+                android:id="@+id/tv_current_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0:00"
+                android:textColor="#FFFFFFFF"
+                android:textSize="14sp"
+                android:layout_marginEnd="8dp" />
+
+            <SeekBar
+                android:id="@+id/playbackBar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:progressTint="#FFFFFF"
+                android:thumbTint="#FFFFFF"
+                android:backgroundTint="#FFFFFF" />
+
+            <TextView
+                android:id="@+id/tv_total_duration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0:00"
+                android:textColor="#FFFFFFFF"
+                android:textSize="14sp"
+                android:layout_marginStart="8dp" />
+        </LinearLayout>
+
         <!-- Playback Control Buttons -->
         <LinearLayout
             android:layout_width="wrap_content"
