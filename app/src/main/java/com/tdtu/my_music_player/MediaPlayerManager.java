@@ -34,7 +34,7 @@ public class MediaPlayerManager {
     };
 
     private String[] artistNames = {
-            "TAEYANG", "NewJeans", "The Weeknd",
+            "TAEYANG", "NewJeans", "The Weekend",
             "Post Malone", "Sơn Tùng M-TP", "Sơn Tùng M-TP", "Imase",
             "Vaundy", "Travis Scott","Travis Scott","Justin Bieber", "Justin Bieber",
             "Linkin Park", "Radiohead","Đàm Vĩnh Hưng","Wowy","Travis Scott"
