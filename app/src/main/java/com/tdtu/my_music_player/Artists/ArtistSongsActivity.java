@@ -1,10 +1,16 @@
-package com.tdtu.my_music_player;
+package com.tdtu.my_music_player.Artists;
 
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.tdtu.my_music_player.PlayerSet.MainActivity;
+import com.tdtu.my_music_player.MediaManager.MediaPlayerManager;
+import com.tdtu.my_music_player.R;
+import com.tdtu.my_music_player.SearchSong.Song;
+import com.tdtu.my_music_player.SearchSong.SongAdapter;
 
 import java.util.List;
 

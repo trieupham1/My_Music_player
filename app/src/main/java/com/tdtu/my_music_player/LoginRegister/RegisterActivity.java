@@ -1,4 +1,4 @@
-package com.tdtu.my_music_player;
+package com.tdtu.my_music_player.LoginRegister;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,6 +15,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.tdtu.my_music_player.R;
 
 import java.util.HashMap;
 import java.util.Map;

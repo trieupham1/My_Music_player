@@ -1,4 +1,4 @@
-package com.tdtu.my_music_player;
+package com.tdtu.my_music_player.SearchSong;
 
 import android.os.Bundle;
 import android.text.Editable;
@@ -14,6 +14,9 @@ import android.widget.ListView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
+import com.tdtu.my_music_player.PlayerSet.MainActivity;
+import com.tdtu.my_music_player.R;
 
 import java.util.ArrayList;
 import java.util.Arrays;

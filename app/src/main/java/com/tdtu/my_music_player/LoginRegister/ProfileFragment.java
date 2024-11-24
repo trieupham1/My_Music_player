@@ -1,4 +1,4 @@
-package com.tdtu.my_music_player;
+package com.tdtu.my_music_player.LoginRegister;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.tdtu.my_music_player.R;
 
 public class ProfileFragment extends Fragment {
 

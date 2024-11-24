@@ -1,9 +1,12 @@
-package com.tdtu.my_music_player;
+package com.tdtu.my_music_player.MediaManager;
 
 import android.content.Context;
 import android.media.MediaPlayer;
 import android.os.Build;
 import androidx.annotation.RequiresApi;
+
+import com.tdtu.my_music_player.R;
+import com.tdtu.my_music_player.SearchSong.Song;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -267,7 +270,7 @@ public class MediaPlayerManager {
                 return i;
             }
         }
-        return -1; // Returns -1 if not found
+        return -1;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)

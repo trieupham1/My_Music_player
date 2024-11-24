@@ -1,4 +1,4 @@
-package com.tdtu.my_music_player;
+package com.tdtu.my_music_player.SearchSong;
 
 public class Song {
     private String title;

@@ -11,7 +11,7 @@
 
         <!-- Main Activity -->
         <activity
-            android:name=".MainActivity"
+            android:name=".PlayerSet.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -21,31 +21,31 @@
 
         <!-- Auth Activity (Login) -->
         <activity
-            android:name=".AuthActivity"
+            android:name=".LoginRegister.AuthActivity"
             android:exported="false" />
 
         <!-- Register Activity -->
         <activity
-            android:name=".RegisterActivity"
+            android:name=".LoginRegister.RegisterActivity"
             android:exported="false" />
 
         <!-- Music Category Activity -->
         <activity
-            android:name=".MusicCategoryActivity"
+            android:name=".CategoriesSet.MusicCategoryActivity"
             android:exported="true" />
 
         <!-- Artist Songs Activity -->
         <activity
-            android:name=".ArtistSongsActivity"
+            android:name=".Artists.ArtistSongsActivity"
             android:exported="true" />
 
         <!-- Genre Songs Activity -->
         <activity
-            android:name=".GenreSongsActivity"
+            android:name=".Genres.GenreSongsActivity"
             android:exported="true" />
 
         <!-- MediaPlayer Service -->
-        <service android:name=".MediaPlayerService" />
+        <service android:name=".MediaManager.MediaPlayerService" />
 
     </application>
 </manifest>

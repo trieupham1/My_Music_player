@@ -1,5 +1,5 @@
 // MainActivity.java
-package com.tdtu.my_music_player;
+package com.tdtu.my_music_player.PlayerSet;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,6 +17,9 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.tdtu.my_music_player.LoginRegister.AuthActivity;
+import com.tdtu.my_music_player.MediaManager.MediaPlayerManager;
+import com.tdtu.my_music_player.R;
 
 public class MainActivity extends AppCompatActivity {
 

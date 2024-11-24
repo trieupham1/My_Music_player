@@ -1,4 +1,4 @@
-package com.tdtu.my_music_player;
+package com.tdtu.my_music_player.Home;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,6 +10,14 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.tdtu.my_music_player.Artists.ArtistAdapter;
+import com.tdtu.my_music_player.Artists.ArtistSongsActivity;
+import com.tdtu.my_music_player.CategoriesSet.CategoriesAdapter;
+import com.tdtu.my_music_player.CategoriesSet.MusicCategoryActivity;
+import com.tdtu.my_music_player.Genres.GenreSongsActivity;
+import com.tdtu.my_music_player.R;
+
 import java.util.ArrayList;
 import java.util.List;
 

@@ -1,4 +1,6 @@
-package com.tdtu.my_music_player;
+package com.tdtu.my_music_player.Playlist;
+
+import com.tdtu.my_music_player.SearchSong.Song;
 
 import java.util.ArrayList;
 import java.util.List;

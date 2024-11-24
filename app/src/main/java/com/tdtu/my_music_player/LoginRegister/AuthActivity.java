@@ -1,4 +1,4 @@
-package com.tdtu.my_music_player;
+package com.tdtu.my_music_player.LoginRegister;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,6 +10,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.tdtu.my_music_player.PlayerSet.MainActivity;
+import com.tdtu.my_music_player.R;
 
 public class AuthActivity extends AppCompatActivity {
 

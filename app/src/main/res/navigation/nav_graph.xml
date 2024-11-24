@@ -8,26 +8,26 @@
     <!-- Home Fragment -->
     <fragment
         android:id="@+id/navigation_home"
-        android:name="com.tdtu.my_music_player.HomeFragment"
+        android:name="com.tdtu.my_music_player.Home.HomeFragment"
         android:label="Home"
         tools:layout="@layout/fragment_home" />
     <!-- Player Fragment -->
     <fragment
         android:id="@+id/navigation_play"
-        android:name="com.tdtu.my_music_player.PlayFragment"
+        android:name="com.tdtu.my_music_player.PlayerSet.PlayFragment"
         android:label="Player"
         tools:layout="@layout/fragment_play" />
 
     <!-- Library Fragment -->
     <fragment
         android:id="@+id/navigation_search"
-        android:name="com.tdtu.my_music_player.SearchFragment"
+        android:name="com.tdtu.my_music_player.SearchSong.SearchFragment"
         android:label="Search"
         tools:layout="@layout/fragment_search" />
 
     <fragment
         android:id="@+id/navigation_profile"
-        android:name="com.tdtu.my_music_player.ProfileFragment"
+        android:name="com.tdtu.my_music_player.LoginRegister.ProfileFragment"
         android:label="Profile"
         tools:layout="@layout/activity_profile" />
 
@@ -35,7 +35,7 @@
 
     <fragment
         android:id="@+id/navigation_playlist"
-        android:name="com.tdtu.my_music_player.PlaylistFragment"
+        android:name="com.tdtu.my_music_player.Playlist.PlaylistFragment"
         android:label="Playlist"
         tools:layout="@layout/fragment_playlist" />
     <!-- Profile Fragment -->

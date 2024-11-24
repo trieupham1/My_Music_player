@@ -1,4 +1,4 @@
-package com.tdtu.my_music_player;
+package com.tdtu.my_music_player.PlayerSet;
 
 import android.content.Context;
 import android.media.AudioManager;
@@ -16,6 +16,10 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
+import com.tdtu.my_music_player.MediaManager.MediaPlayerManager;
+import com.tdtu.my_music_player.Playlist.PlaylistManager;
+import com.tdtu.my_music_player.R;
 
 public class PlayFragment extends Fragment {
 

@@ -1,9 +1,11 @@
-package com.tdtu.my_music_player;
+package com.tdtu.my_music_player.MediaManager;
 
 import android.app.Service;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.IBinder;
+
+import com.tdtu.my_music_player.R;
 
 public class MediaPlayerService extends Service {
 

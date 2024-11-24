@@ -1,4 +1,4 @@
-package com.tdtu.my_music_player;
+package com.tdtu.my_music_player.Playlist;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,6 +12,11 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
+import com.tdtu.my_music_player.MediaManager.MediaPlayerManager;
+import com.tdtu.my_music_player.PlayerSet.MainActivity;
+import com.tdtu.my_music_player.R;
+import com.tdtu.my_music_player.SearchSong.Song;
 
 import java.util.List;
 
