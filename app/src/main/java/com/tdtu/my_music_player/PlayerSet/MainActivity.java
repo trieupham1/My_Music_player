@@ -61,24 +61,22 @@ public class MainActivity extends AppCompatActivity {
         // Check for any song passed via intent to play
         handleIntent(getIntent());
 
-        // Set up Play/Pause button in the mini-player
         btnPlayPause.setOnClickListener(v -> {
             mediaPlayerManager.pauseOrResumeSong();
             updateMiniPlayerUI();
-            notifyPlayFragment();
+            notifyPlayFragment(); // Notify PlayFragment to stay in sync
         });
 
-        // Set up Next button in the mini-player
         btnNext.setOnClickListener(v -> {
             playNextSong();
-            notifyPlayFragment();
+            notifyPlayFragment(); // Notify PlayFragment to stay in sync
         });
 
-        // Set up Previous button in the mini-player
         btnPrevious.setOnClickListener(v -> {
             playPreviousSong();
-            notifyPlayFragment();
+            notifyPlayFragment(); // Notify PlayFragment to stay in sync
         });
+
     }
 
     // Handle the intent passed from other activities (like playing a song)
@@ -162,6 +160,7 @@ public class MainActivity extends AppCompatActivity {
             onPlayerStatusChangedListener.onPlayerStatusChanged();
         }
     }
+
 
     public void setOnPlayerStatusChangedListener(OnPlayerStatusChangedListener listener) {
         this.onPlayerStatusChangedListener = listener;
