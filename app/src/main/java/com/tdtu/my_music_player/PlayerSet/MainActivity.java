@@ -154,23 +154,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // Notify the PlayFragment to update its UI
     private void notifyPlayFragment() {
         if (onPlayerStatusChangedListener != null) {
-            onPlayerStatusChangedListener.onPlayerStatusChanged(); // Notify PlayFragment
-        }
-
-        // Update the big player in the nav host when the mini-player is clicked
-        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.nav_host_fragment);
-        if (navHostFragment != null) {
-            PlayFragment playFragment = (PlayFragment) navHostFragment.getChildFragmentManager()
-                    .findFragmentById(R.id.navigation_play);
-            if (playFragment != null) {
-                playFragment.updateUI();
-            }
+            onPlayerStatusChangedListener.onPlayerStatusChanged();
         }
     }
-
 
 
     public void setOnPlayerStatusChangedListener(OnPlayerStatusChangedListener listener) {

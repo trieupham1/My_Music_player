@@ -59,10 +59,6 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
-
-    implementation ("androidx.media:media:1.6.0")
-    implementation ("androidx.core:core-ktx:1.10.1")
-
 }
 
 // Apply the Google Services plugin at the end of the file
