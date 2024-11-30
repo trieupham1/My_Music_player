@@ -23,6 +23,7 @@ import androidx.fragment.app.Fragment;
 
 import com.tdtu.my_music_player.MediaManager.MediaPlayerManager;
 import com.tdtu.my_music_player.R;
+import com.tdtu.my_music_player.Time.TimerDialogFragment;
 
 public class PlayFragment extends Fragment {
 
@@ -68,7 +69,7 @@ public class PlayFragment extends Fragment {
         btnNext.setOnClickListener(v -> playNextSong());
         btnPrevious.setOnClickListener(v -> playPreviousSong());
         btnAddToPlaylist.setOnClickListener(v -> addToPlaylist());
-        btnStartTimer.setOnClickListener(v -> showCountdownDialog());
+        setupSleepTimer();
 
         setupPlaybackBar();
         setupVolumeControl();
@@ -107,57 +108,58 @@ public class PlayFragment extends Fragment {
         Toast.makeText(requireContext(), "Added to playlist", Toast.LENGTH_SHORT).show();
     }
 
-    private void showCountdownDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-        builder.setTitle("Set Countdown Time");
-
-        final android.widget.EditText input = new android.widget.EditText(requireContext());
-        input.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
-        input.setTextColor(getResources().getColor(android.R.color.black)); // Set text color to black
-        builder.setView(input);
-
-        builder.setPositiveButton("Set", (dialog, which) -> {
-            String inputTime = input.getText().toString();
-            if (!inputTime.isEmpty()) {
-                int minutes = Integer.parseInt(inputTime);
-                if (minutes > 0) {
-                    timeLeftInMillis = minutes * 60 * 1000; // Convert to milliseconds
-                    startCountdown();
-                } else {
-                    Toast.makeText(requireContext(), "Enter a valid time!", Toast.LENGTH_SHORT).show();
+    private void setupSleepTimer() {
+        btnStartTimer.setOnClickListener(v -> {
+            TimerDialogFragment timerDialog = new TimerDialogFragment(minutes -> {
+                if (minutes == 0) {
+                    cancelSleepTimer();
+                } else if (minutes > 0) {
+                    setSleepTimer(minutes);
+                } else if (minutes == -1) {
+                    Toast.makeText(requireContext(), getString(R.string.music_stop_end_of_video), Toast.LENGTH_SHORT).show();
                 }
-            }
+            });
+            timerDialog.show(getParentFragmentManager(), "TimerDialog");
         });
-
-        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
-        builder.show();
     }
 
-    private void startCountdown() {
-        countDownTimer = new CountDownTimer(timeLeftInMillis, 1000) {
+    private void setSleepTimer(int minutes) {
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+        }
+
+        long timerDurationMillis = minutes * 60 * 1000; // Convert minutes to milliseconds
+
+        countDownTimer = new CountDownTimer(timerDurationMillis, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
-                timeLeftInMillis = millisUntilFinished;
-                updateCountdownText();
+                int remainingMinutes = (int) (millisUntilFinished / 1000) / 60;
+                int remainingSeconds = (int) (millisUntilFinished / 1000) % 60;
+                tvCountdownTimer.setText(String.format(getString(R.string.music_stop_timer), String.format("%02d:%02d", remainingMinutes, remainingSeconds)));
             }
 
             @Override
             public void onFinish() {
-                mediaPlayerManager.stopSong();
-                isTimerRunning = false;
-                tvCountdownTimer.setTextColor(getResources().getColor(android.R.color.black)); // Set text color to black
-                tvCountdownTimer.setText("Countdown: 00:00");
+                if (mediaPlayerManager != null) {
+                    mediaPlayerManager.stopSong();
+                }
+                tvCountdownTimer.setText(String.format(getString(R.string.music_stop_timer), "00:00"));
+                Toast.makeText(requireContext(), getString(R.string.music_stopped), Toast.LENGTH_SHORT).show();
             }
         }.start();
-        isTimerRunning = true;
+        Toast.makeText(requireContext(), getString(R.string.music_stop_timer_set, minutes), Toast.LENGTH_SHORT).show();
     }
 
-    private void updateCountdownText() {
-        int minutes = (int) (timeLeftInMillis / 1000) / 60;
-        int seconds = (int) (timeLeftInMillis / 1000) % 60;
-        tvCountdownTimer.setTextColor(getResources().getColor(android.R.color.white)); // Set text color to black
-        tvCountdownTimer.setText(String.format("Countdown: %02d:%02d", minutes, seconds));
+    private void cancelSleepTimer() {
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+            countDownTimer = null;
+        }
+        tvCountdownTimer.setText(String.format(getString(R.string.music_stop_timer), "00:00"));
+        Toast.makeText(requireContext(), getString(R.string.music_stop_timer_canceled), Toast.LENGTH_SHORT).show();
     }
+
+
 
 
     private void setupPlaybackBar() {

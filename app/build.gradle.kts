@@ -54,6 +54,7 @@ dependencies {
     implementation(libs.activity)
     implementation(libs.constraintlayout)
     implementation(libs.firebase.database)
+    implementation(libs.recyclerview)
 
     // Testing dependencies
     testImplementation(libs.junit)

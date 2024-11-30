@@ -12,4 +12,10 @@
     <string name="album_cover_desc">Album cover image</string>
     <string name="song_title">Song Title</string>
     <string name="song_artist">Artist Name</string>
+    <string name="music_stop_timer_set">Sleep timer set for %1$d minutes</string>
+    <string name="music_stop_timer_canceled">Sleep timer canceled</string>
+    <string name="music_stop_timer">Music Stop: %1$s</string>
+    <string name="music_stopped">Music stopped</string>
+    <string name="music_stop_end_of_video">Music will stop at the end of the video</string>
+
 </resources>
