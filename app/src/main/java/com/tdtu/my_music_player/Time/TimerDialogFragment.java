@@ -22,7 +22,7 @@ public class TimerDialogFragment extends DialogFragment {
         void onTimerOptionSelected(int minutes);
     }
 
-    private TimerOptionSelectedListener listener;
+    private final TimerOptionSelectedListener listener;
 
     public TimerDialogFragment(TimerOptionSelectedListener listener) {
         this.listener = listener;
@@ -36,17 +36,16 @@ public class TimerDialogFragment extends DialogFragment {
         RecyclerView recyclerView = view.findViewById(R.id.rv_timer_options);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        // Options for sleep timer
-        List<String> timerOptions = Arrays.asList("5 minutes", "10 minutes", "15 minutes", "20 minutes", "30 minutes", "Cancel");
-        List<Integer> timerMinutes = Arrays.asList(5, 10, 15, 20, 30, 0); // Corresponding values
+        List<String> timerOptions = Arrays.asList("Tắt", "5 phút", "10 phút", "15 phút", "20 phút", "30 phút", "1 giờ");
+        List<Integer> timerMinutes = Arrays.asList(0, 5, 10, 15, 20, 30, 60);
 
         TimerOptionAdapter adapter = new TimerOptionAdapter(timerOptions, position -> {
             int selectedMinutes = timerMinutes.get(position);
             listener.onTimerOptionSelected(selectedMinutes);
             dismiss();
         });
-
         recyclerView.setAdapter(adapter);
+
         return view;
     }
 }

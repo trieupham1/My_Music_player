@@ -14,38 +14,40 @@ import java.util.List;
 
 public class TimerOptionAdapter extends RecyclerView.Adapter<TimerOptionAdapter.TimerViewHolder> {
 
-    private final List<String> options;
+    private final List<String> timerOptions;
     private final OnOptionClickListener listener;
 
-    public TimerOptionAdapter(List<String> options, OnOptionClickListener listener) {
-        this.options = options;
+    public TimerOptionAdapter(List<String> timerOptions, OnOptionClickListener listener) {
+        this.timerOptions = timerOptions;
         this.listener = listener;
     }
 
     @NonNull
     @Override
     public TimerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(android.R.layout.simple_list_item_1, parent, false);
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(android.R.layout.simple_list_item_1, parent, false);
         return new TimerViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull TimerViewHolder holder, int position) {
-        holder.textView.setText(options.get(position));
+        String option = timerOptions.get(position);
+        holder.textView.setText(option);
         holder.itemView.setOnClickListener(v -> listener.onOptionClick(position));
     }
 
     @Override
     public int getItemCount() {
-        return options.size();
+        return timerOptions.size();
     }
 
     public interface OnOptionClickListener {
         void onOptionClick(int position);
     }
 
-    public static class TimerViewHolder extends RecyclerView.ViewHolder {
-        public TextView textView;
+    static class TimerViewHolder extends RecyclerView.ViewHolder {
+        TextView textView;
 
         public TimerViewHolder(@NonNull View itemView) {
             super(itemView);
