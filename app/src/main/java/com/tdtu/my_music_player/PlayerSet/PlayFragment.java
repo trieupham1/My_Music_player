@@ -153,7 +153,7 @@ public class PlayFragment extends Fragment {
     private void updateCountdownText() {
         int minutes = (int) (timeLeftInMillis / 1000) / 60;
         int seconds = (int) (timeLeftInMillis / 1000) % 60;
-        tvCountdownTimer.setTextColor(getResources().getColor(android.R.color.black)); // Set text color to black
+        tvCountdownTimer.setTextColor(getResources().getColor(android.R.color.white)); // Set text color to black
         tvCountdownTimer.setText(String.format("Countdown: %02d:%02d", minutes, seconds));
     }
 
