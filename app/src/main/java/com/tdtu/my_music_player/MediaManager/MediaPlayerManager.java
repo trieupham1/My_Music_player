@@ -202,7 +202,7 @@ public class MediaPlayerManager {
         return currentSongResource; // Return the resource ID of the currently playing song
     }
     public void addCurrentSongToPlaylist(Context context) {
-        PlaylistManager playlistManager = PlaylistManager.getInstance();
+        PlaylistManager playlistManager = PlaylistManager.getInstance(context);
         if (playlistManager.isSongInPlaylist(currentSongTitle, currentArtistName)) {
             Toast.makeText(context, "Song is already in the playlist", Toast.LENGTH_SHORT).show();
         } else {

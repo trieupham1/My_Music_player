@@ -1,5 +1,7 @@
 package com.tdtu.my_music_player.Playlist;
 
+import android.content.Context;
+
 import com.tdtu.my_music_player.SearchSong.Song;
 
 import java.util.ArrayList;
@@ -7,16 +9,19 @@ import java.util.List;
 
 public class PlaylistManager {
     private static PlaylistManager instance;
-    private List<Song> playlist;
+    private final List<Song> playlist;
     private Song currentSong;
 
-    private PlaylistManager() {
+    private Context context; // Store the context if needed
+
+    private PlaylistManager(Context context) {
+        this.context = context.getApplicationContext(); // Use application context to avoid leaks
         playlist = new ArrayList<>();
     }
 
-    public static PlaylistManager getInstance() {
+    public static PlaylistManager getInstance(Context context) {
         if (instance == null) {
-            instance = new PlaylistManager();
+            instance = new PlaylistManager(context); // Pass the context here
         }
         return instance;
     }
