@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
@@ -35,17 +36,14 @@ public class TimerDialogFragment extends DialogFragment {
         RecyclerView recyclerView = view.findViewById(R.id.rv_timer_options);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        // Timer options (in minutes)
-        List<String> timerOptions = Arrays.asList("Tắt", "10 phút", "15 phút", "20 phút", "30 phút", "45 phút", "1 giờ", "Khi hết video");
-        List<Integer> timerMinutes = Arrays.asList(0, 10, 15, 20, 30, 45, 60, -1); // Corresponding values
+        // Options for sleep timer
+        List<String> timerOptions = Arrays.asList("5 minutes", "10 minutes", "15 minutes", "20 minutes", "30 minutes", "Cancel");
+        List<Integer> timerMinutes = Arrays.asList(5, 10, 15, 20, 30, 0); // Corresponding values
 
-        // Set up RecyclerView adapter
         TimerOptionAdapter adapter = new TimerOptionAdapter(timerOptions, position -> {
             int selectedMinutes = timerMinutes.get(position);
-            if (listener != null) {
-                listener.onTimerOptionSelected(selectedMinutes);
-            }
-            dismiss(); // Close the dialog
+            listener.onTimerOptionSelected(selectedMinutes);
+            dismiss();
         });
 
         recyclerView.setAdapter(adapter);

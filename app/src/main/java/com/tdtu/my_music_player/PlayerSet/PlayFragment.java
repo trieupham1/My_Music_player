@@ -65,6 +65,9 @@ public class PlayFragment extends Fragment {
         audioManager = (AudioManager) requireContext().getSystemService(Context.AUDIO_SERVICE);
 
         // Set up button listeners
+        tvCountdownTimer = view.findViewById(R.id.tv_countdown_timer);
+        btnStartTimer = view.findViewById(R.id.btn_start_timer);
+
         btnPlayPause.setOnClickListener(v -> togglePlayPause());
         btnNext.setOnClickListener(v -> playNextSong());
         btnPrevious.setOnClickListener(v -> playPreviousSong());
@@ -107,59 +110,6 @@ public class PlayFragment extends Fragment {
         mediaPlayerManager.addCurrentSongToPlaylist(requireContext());
         Toast.makeText(requireContext(), "Added to playlist", Toast.LENGTH_SHORT).show();
     }
-
-    private void setupSleepTimer() {
-        btnStartTimer.setOnClickListener(v -> {
-            TimerDialogFragment timerDialog = new TimerDialogFragment(minutes -> {
-                if (minutes == 0) {
-                    cancelSleepTimer();
-                } else if (minutes > 0) {
-                    setSleepTimer(minutes);
-                } else if (minutes == -1) {
-                    Toast.makeText(requireContext(), getString(R.string.music_stop_end_of_video), Toast.LENGTH_SHORT).show();
-                }
-            });
-            timerDialog.show(getParentFragmentManager(), "TimerDialog");
-        });
-    }
-
-    private void setSleepTimer(int minutes) {
-        if (countDownTimer != null) {
-            countDownTimer.cancel();
-        }
-
-        long timerDurationMillis = minutes * 60 * 1000; // Convert minutes to milliseconds
-
-        countDownTimer = new CountDownTimer(timerDurationMillis, 1000) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-                int remainingMinutes = (int) (millisUntilFinished / 1000) / 60;
-                int remainingSeconds = (int) (millisUntilFinished / 1000) % 60;
-                tvCountdownTimer.setText(String.format(getString(R.string.music_stop_timer), String.format("%02d:%02d", remainingMinutes, remainingSeconds)));
-            }
-
-            @Override
-            public void onFinish() {
-                if (mediaPlayerManager != null) {
-                    mediaPlayerManager.stopSong();
-                }
-                tvCountdownTimer.setText(String.format(getString(R.string.music_stop_timer), "00:00"));
-                Toast.makeText(requireContext(), getString(R.string.music_stopped), Toast.LENGTH_SHORT).show();
-            }
-        }.start();
-        Toast.makeText(requireContext(), getString(R.string.music_stop_timer_set, minutes), Toast.LENGTH_SHORT).show();
-    }
-
-    private void cancelSleepTimer() {
-        if (countDownTimer != null) {
-            countDownTimer.cancel();
-            countDownTimer = null;
-        }
-        tvCountdownTimer.setText(String.format(getString(R.string.music_stop_timer), "00:00"));
-        Toast.makeText(requireContext(), getString(R.string.music_stop_timer_canceled), Toast.LENGTH_SHORT).show();
-    }
-
-
 
 
     private void setupPlaybackBar() {
@@ -207,6 +157,56 @@ public class PlayFragment extends Fragment {
         // Start the periodic updates
         handler.post(updateSeekBarRunnable);
     }
+    private void setupSleepTimer() {
+        btnStartTimer.setOnClickListener(v -> {
+            TimerDialogFragment timerDialog = new TimerDialogFragment(minutes -> {
+                if (minutes == 0) {
+                    cancelSleepTimer(); // Cancel timer
+                } else if (minutes > 0) {
+                    setSleepTimer(minutes); // Set timer
+                }
+            });
+            timerDialog.show(getParentFragmentManager(), "TimerDialog");
+        });
+    }
+
+    private void setSleepTimer(int minutes) {
+        if (countDownTimer != null) {
+            countDownTimer.cancel(); // Cancel any existing timer
+        }
+
+        long timerDurationMillis = minutes * 60 * 1000; // Convert minutes to milliseconds
+
+        countDownTimer = new CountDownTimer(timerDurationMillis, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                int remainingMinutes = (int) (millisUntilFinished / 1000) / 60;
+                int remainingSeconds = (int) (millisUntilFinished / 1000) % 60;
+                tvCountdownTimer.setText(String.format("Music Stop: %02d:%02d", remainingMinutes, remainingSeconds));
+            }
+
+            @Override
+            public void onFinish() {
+                if (mediaPlayerManager != null) {
+                    mediaPlayerManager.stopSong(); // Stop the music
+                }
+                tvCountdownTimer.setText("Music Stop: 00:00");
+                Toast.makeText(requireContext(), "Music stopped", Toast.LENGTH_SHORT).show();
+            }
+        }.start();
+
+        Toast.makeText(requireContext(), "Sleep timer set for " + minutes + " minutes", Toast.LENGTH_SHORT).show();
+    }
+
+    private void cancelSleepTimer() {
+        if (countDownTimer != null) {
+            countDownTimer.cancel(); // Cancel the countdown timer
+            countDownTimer = null;
+        }
+        tvCountdownTimer.setText("Music Stop: 00:00");
+        Toast.makeText(requireContext(), "Sleep timer canceled", Toast.LENGTH_SHORT).show();
+    }
+
 
 
     private void setupVolumeControl() {

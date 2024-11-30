@@ -60,6 +60,8 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+    implementation("androidx.recyclerview:recyclerview:1.3.0") // Updated version
+
 
     implementation ("androidx.media:media:1.6.0")
     implementation ("androidx.core:core-ktx:1.10.1")
