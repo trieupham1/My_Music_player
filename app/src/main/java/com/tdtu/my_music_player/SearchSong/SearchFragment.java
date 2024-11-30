@@ -7,13 +7,12 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ListView;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.tdtu.my_music_player.PlayerSet.MainActivity;
 import com.tdtu.my_music_player.R;
@@ -25,9 +24,7 @@ import java.util.List;
 public class SearchFragment extends Fragment {
 
     private EditText searchEditText;
-    private ListView listView;
-    private ListView searchResultsListView;
-
+    private RecyclerView searchResultsRecyclerView;
 
     private String[] songTitles = {
             "EYES, NOSE, LIPS", "OMG", "Blinding Lights",
@@ -61,8 +58,8 @@ public class SearchFragment extends Fragment {
             R.drawable.justin3, R.drawable.rock1, R.drawable.rock2,R.drawable.laudaitinhai,R.drawable.khutaosong
     };
 
-    private List<String> searchResults;
-    private ArrayAdapter<String> searchResultsAdapter;
+    private List<Song> searchResults;
+    private SongAdapter searchAdapter;
 
     @Nullable
     @Override
@@ -70,24 +67,26 @@ public class SearchFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_search, container, false);
 
         searchEditText = view.findViewById(R.id.searchEditText);
-        listView = view.findViewById(R.id.listView);
-        searchResultsListView = view.findViewById(R.id.searchResultsListView);
+        searchResultsRecyclerView = view.findViewById(R.id.searchResultsRecyclerView);
 
         searchResults = new ArrayList<>();
-        searchResultsAdapter = new ArrayAdapter<>(getContext(), R.layout.list_item, R.id.itemTextView, searchResults);
-        searchResultsListView.setAdapter(searchResultsAdapter);
-        searchResultsListView.setVisibility(View.GONE);
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout.list_item, R.id.itemTextView, songTitles);
-        listView.setAdapter(adapter);
-
-        listView.setOnItemClickListener((parent, view1, position, id) -> {
+        searchAdapter = new SongAdapter(getContext(), searchResults, song -> {
+            // Handle song click
             MainActivity mainActivity = (MainActivity) getActivity();
             if (mainActivity != null) {
-                mainActivity.playSelectedSong(songTitles[position], artistNames[position], songResources[position], albumCoverResources[position]);
+                mainActivity.playSelectedSong(song.getTitle(), song.getArtist(), song.getResource(), song.getAlbumCoverResource());
             }
         });
+        searchResultsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        searchResultsRecyclerView.setAdapter(searchAdapter);
 
+        // Example of setting initial songs in the list
+        List<Song> allSongs = getAllSongs();
+        for (Song song : allSongs) {
+            searchResults.add(song);
+        }
+
+        // Listen for changes in search query
         searchEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -101,36 +100,30 @@ public class SearchFragment extends Fragment {
             public void afterTextChanged(Editable s) {}
         });
 
-        searchResultsListView.setOnItemClickListener((parent, view1, position, id) -> {
-            String selectedSong = searchResults.get(position);
-            int index = Arrays.asList(songTitles).indexOf(selectedSong);
-            if (index >= 0) {
-                MainActivity mainActivity = (MainActivity) getActivity();
-                if (mainActivity != null) {
-                    mainActivity.playSelectedSong(songTitles[index], artistNames[index], songResources[index], albumCoverResources[index]);
-                }
-            }
-        });
-
         return view;
     }
 
     private void filterSongs(String query) {
         searchResults.clear();
         if (TextUtils.isEmpty(query)) {
-            searchResultsListView.setVisibility(View.GONE);
-        } else {
-            for (String songTitle : songTitles) {
-                if (songTitle.toLowerCase().contains(query.toLowerCase())) {
-                    searchResults.add(songTitle);
-                }
-            }
-            if (searchResults.isEmpty()) {
-                searchResultsListView.setVisibility(View.GONE);
-            } else {
-                searchResultsListView.setVisibility(View.VISIBLE);
-                searchResultsAdapter.notifyDataSetChanged();
+            searchAdapter.notifyDataSetChanged();
+            return;
+        }
+
+        // Filter songs based on search query
+        for (Song song : getAllSongs()) {
+            if (song.getTitle().toLowerCase().contains(query.toLowerCase())) {
+                searchResults.add(song);
             }
         }
+        searchAdapter.notifyDataSetChanged();
+    }
+
+    private List<Song> getAllSongs() {
+        List<Song> songs = new ArrayList<>();
+        for (int i = 0; i < songTitles.length; i++) {
+            songs.add(new Song(songTitles[i], artistNames[i], songResources[i], albumCoverResources[i]));
+        }
+        return songs;
     }
 }

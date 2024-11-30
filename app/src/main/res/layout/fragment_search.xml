@@ -1,37 +1,28 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
-    android:background="#FF000000">
-    >
+    android:background="@color/black"
+    android:padding="16dp">
 
+    <!-- Search EditText -->
     <EditText
         android:id="@+id/searchEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Search"
-        android:textColor="#FFFFFFFF"
+        android:textColor="#FFFFFF"
         android:textColorHint="@android:color/white"
         android:drawableLeft="@android:drawable/ic_menu_search"
         android:background="@drawable/rounded_edittext_background"
-        android:padding="12dp"/>
+        android:padding="12dp"
+        android:layout_alignParentTop="true"/>
 
-    <ListView
-        android:id="@+id/searchResultsListView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:layout_marginTop="8dp"/>
-
-    <ListView
-        android:id="@+id/listView"
+    <!-- RecyclerView to display songs -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/searchResultsRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:divider="#444444"
-        android:dividerHeight="1dp"
-        android:layout_margin="8dp"
-        android:cacheColorHint="@android:color/transparent"
-        android:background="@android:color/transparent" />
-
-</LinearLayout>
+        android:layout_below="@id/searchEditText"
+        android:layout_marginTop="8dp" />
+</RelativeLayout>

@@ -4,19 +4,21 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.tdtu.my_music_player.R;
 
 import java.util.List;
 
-public class SongAdapter extends BaseAdapter {
+public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder> {
 
-    private Context context;
-    private List<Song> songs;
-    private OnSongClickListener listener;
+    private final Context context;
+    private final List<Song> songs;
+    private final OnSongClickListener listener;
 
     public interface OnSongClickListener {
         void onSongClick(Song song);
@@ -28,53 +30,40 @@ public class SongAdapter extends BaseAdapter {
         this.listener = listener;
     }
 
+    @NonNull
     @Override
-    public int getCount() {
-        return songs.size();
+    public SongViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(context).inflate(R.layout.list_item, parent, false);
+        return new SongViewHolder(view);
     }
 
     @Override
-    public Object getItem(int position) {
-        return songs.get(position);
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return position;
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder holder;
-
-        if (convertView == null) {
-            convertView = LayoutInflater.from(context).inflate(R.layout.list_item, parent, false);
-            holder = new ViewHolder();
-            holder.albumCover = convertView.findViewById(R.id.album_cover);
-            holder.songTitle = convertView.findViewById(R.id.song_title);
-            holder.songArtist = convertView.findViewById(R.id.song_artist);
-            convertView.setTag(holder);
-        } else {
-            holder = (ViewHolder) convertView.getTag();
-        }
-
+    public void onBindViewHolder(@NonNull SongViewHolder holder, int position) {
         Song song = songs.get(position);
+
+        // Set song details to view
         holder.songTitle.setText(song.getTitle());
         holder.songArtist.setText(song.getArtist());
         holder.albumCover.setImageResource(song.getAlbumCoverResource());
 
-        convertView.setOnClickListener(v -> {
-            if (listener != null) {
-                listener.onSongClick(song);
-            }
-        });
-
-        return convertView;
+        // Set the click listener for the item
+        holder.itemView.setOnClickListener(v -> listener.onSongClick(song));
     }
 
-    private static class ViewHolder {
+    @Override
+    public int getItemCount() {
+        return songs.size();
+    }
+
+    public static class SongViewHolder extends RecyclerView.ViewHolder {
+        TextView songTitle, songArtist;
         ImageView albumCover;
-        TextView songTitle;
-        TextView songArtist;
+
+        public SongViewHolder(@NonNull View itemView) {
+            super(itemView);
+            songTitle = itemView.findViewById(R.id.song_title);
+            songArtist = itemView.findViewById(R.id.song_artist);
+            albumCover = itemView.findViewById(R.id.album_cover);
+        }
     }
 }
