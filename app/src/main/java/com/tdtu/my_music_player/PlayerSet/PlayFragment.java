@@ -4,6 +4,8 @@ import android.content.Context;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -159,22 +161,51 @@ public class PlayFragment extends Fragment {
 
 
     private void setupPlaybackBar() {
+        // Set the maximum value of the SeekBar to the total duration of the current song
         playbackBar.setMax(mediaPlayerManager.getTotalDuration());
+
+        // Listener for user interactions with the SeekBar
         playbackBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                // If the user is dragging the SeekBar, update the playback position
                 if (fromUser) {
                     mediaPlayerManager.seekTo(progress);
                 }
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {}
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                // Optionally pause updates while user is interacting
+            }
 
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {}
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                // Optionally resume updates when user stops interacting
+            }
         });
+
+        // Use a Handler to update the SeekBar as the song plays
+        Handler handler = new Handler(Looper.getMainLooper());
+        Runnable updateSeekBarRunnable = new Runnable() {
+            @Override
+            public void run() {
+                // Continuously update the SeekBar and the current time text if the song is playing
+                if (mediaPlayerManager.isPlaying()) {
+                    int currentPosition = mediaPlayerManager.getCurrentPosition();
+                    playbackBar.setProgress(currentPosition); // Update the SeekBar position
+                    tvCurrentTime.setText(formatTime(currentPosition)); // Update the current time text
+                }
+
+                // Schedule the next update after 1 second
+                handler.postDelayed(this, 1000);
+            }
+        };
+
+        // Start the periodic updates
+        handler.post(updateSeekBarRunnable);
     }
+
 
     private void setupVolumeControl() {
         volumeBar.setMax(audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
