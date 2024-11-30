@@ -180,20 +180,20 @@ public class PlayFragment extends Fragment {
     }
 
     private void startSleepTimer() {
-        saveTimerState(timeLeftInMillis, true);
+        long startTime = System.currentTimeMillis();
+        saveTimerState(timeLeftInMillis, true, startTime);
 
         countDownTimer = new CountDownTimer(timeLeftInMillis, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 timeLeftInMillis = millisUntilFinished;
                 updateCountdownText();
-                saveTimerState(timeLeftInMillis, true); // Persist the timer state on each tick
             }
 
             @Override
             public void onFinish() {
                 isTimerRunning = false;
-                saveTimerState(0, false); // Clear the timer state
+                saveTimerState(0, false, 0); // Clear the timer state
                 tvCountdownTimer.setText("Music Stop: 00:00");
                 if (mediaPlayerManager != null) {
                     mediaPlayerManager.stopSong();
@@ -211,7 +211,7 @@ public class PlayFragment extends Fragment {
             countDownTimer.cancel();
         }
         isTimerRunning = false;
-        saveTimerState(0, false); // Clear the timer state
+        saveTimerState(0, false, 0); // Clear the timer state
         tvCountdownTimer.setText("Music Stop: 00:00");
         Toast.makeText(requireContext(), "Sleep timer canceled", Toast.LENGTH_SHORT).show();
     }
@@ -222,11 +222,12 @@ public class PlayFragment extends Fragment {
         tvCountdownTimer.setText(String.format("Music Stop: %02d:%02d", minutes, seconds));
     }
 
-    private void saveTimerState(long timeLeft, boolean isRunning) {
+    private void saveTimerState(long timeLeft, boolean isRunning, long startTime) {
         SharedPreferences sharedPreferences = requireContext().getSharedPreferences("TimerPrefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putLong("timeLeft", timeLeft);
         editor.putBoolean("isRunning", isRunning);
+        editor.putLong("startTime", startTime);
         editor.apply();
     }
 
@@ -234,9 +235,19 @@ public class PlayFragment extends Fragment {
         SharedPreferences sharedPreferences = requireContext().getSharedPreferences("TimerPrefs", Context.MODE_PRIVATE);
         timeLeftInMillis = sharedPreferences.getLong("timeLeft", 0);
         isTimerRunning = sharedPreferences.getBoolean("isRunning", false);
+        long startTime = sharedPreferences.getLong("startTime", 0);
 
         if (isTimerRunning) {
-            startSleepTimer(); // Resume the timer if it was running
+            long elapsedTime = System.currentTimeMillis() - startTime;
+            timeLeftInMillis -= elapsedTime;
+
+            if (timeLeftInMillis > 0) {
+                startSleepTimer(); // Resume the timer if there is still time left
+            } else {
+                isTimerRunning = false;
+                tvCountdownTimer.setText("Music Stop: 00:00");
+                saveTimerState(0, false, 0); // Clear the timer state
+            }
         } else {
             updateCountdownText(); // Update UI with the last known timer state
         }
@@ -247,6 +258,7 @@ public class PlayFragment extends Fragment {
         super.onResume();
         restoreTimerState(); // Restore the timer state when returning to the fragment
     }
+
 
 
 

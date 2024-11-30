@@ -48,6 +48,11 @@
 
         <!-- MediaPlayer Service -->
         <service android:name=".MediaManager.MediaPlayerService" />
+        <service
+            android:name=".Time.TimerService"
+            android:exported="false"
+            android:foregroundServiceType="mediaPlayback" />
+
 
     </application>
 </manifest>
