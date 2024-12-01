@@ -66,6 +66,8 @@ dependencies {
     implementation ("androidx.media:media:1.6.0")
     implementation ("androidx.core:core-ktx:1.10.1")
     implementation ("com.google.code.gson:gson:2.8.9")
+    implementation ("androidx.media:media:1.6.0")
+
 }
 
 // Apply the Google Services plugin at the end of the file

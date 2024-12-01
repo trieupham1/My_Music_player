@@ -7,17 +7,17 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
-import android.media.session.MediaSession;
 import android.os.Build;
 
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
+import androidx.media.session.MediaButtonReceiver;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.widget.Toast;
 
+import com.tdtu.my_music_player.PlayerSet.MainActivity;
 import com.tdtu.my_music_player.Playlist.PlaylistManager;
 import com.tdtu.my_music_player.R;
-import com.tdtu.my_music_player.Notification.MediaNotificationReceiver;
 import com.tdtu.my_music_player.SearchSong.Song;
 
 import java.util.ArrayList;
@@ -32,29 +32,32 @@ public class MediaPlayerManager {
     private int currentAlbumCoverResource;
     private int currentSongResource;
     private int currentSongIndex = 0;
+
     private MediaSessionCompat mediaSession;
     private NotificationManager notificationManager;
 
-    private static final String CHANNEL_ID = "MediaPlayerNotificationChannel";
+    private static final String CHANNEL_ID = "MUSIC_PLAYBACK_CHANNEL";
 
     private List<PlaybackStateListener> listeners = new ArrayList<>();
 
-    // Song data arrays
     private int[] songResources = {
-            R.raw.kpop1, R.raw.kpop3, R.raw.usuk2, R.raw.usuk3, R.raw.vpop1, R.raw.vpop3,
-            R.raw.jpop1, R.raw.jpop2, R.raw.travis, R.raw.fein, R.raw.justin, R.raw.justin2,
+            R.raw.kpop1, R.raw.kpop3, R.raw.usuk2, R.raw.usuk3,
+            R.raw.vpop1, R.raw.vpop3, R.raw.jpop1, R.raw.jpop2,
+            R.raw.travis, R.raw.fein, R.raw.justin, R.raw.justin2,
             R.raw.rock1, R.raw.rock2, R.raw.laudaitinhai, R.raw.khutaosong
     };
 
     private String[] songTitles = {
             "EYES, NOSE, LIPS", "OMG", "Blinding Lights", "Sunflower",
             "Đừng Làm Trái Tim Anh Đau", "Chạy Ngay Đi", "NIGHT DANCER", "Odoriko (踊り子)",
-            "Highest in the Room", "Fein", "Yummy", "Peaches", "Numb", "Creep", "Lâu Đài Tình Ái", "Khu Tao Sống"
+            "Highest in the Room", "Fein", "Yummy", "Peaches",
+            "Numb", "Creep", "Lâu Đài Tình Ái", "Khu Tao Sống"
     };
 
     private String[] artistNames = {
-            "TAEYANG", "NewJeans", "The Weeknd", "Post Malone", "Sơn Tùng M-TP", "Sơn Tùng M-TP",
-            "Imase", "Vaundy", "Travis Scott", "Travis Scott", "Justin Bieber", "Justin Bieber",
+            "TAEYANG", "NewJeans", "The Weeknd", "Post Malone",
+            "Sơn Tùng M-TP", "Sơn Tùng M-TP", "Imase", "Vaundy",
+            "Travis Scott", "Travis Scott", "Justin Bieber", "Justin Bieber",
             "Linkin Park", "Radiohead", "Đàm Vĩnh Hưng", "Wowy"
     };
 
@@ -64,13 +67,193 @@ public class MediaPlayerManager {
             R.drawable.travis, R.drawable.fein, R.drawable.justin2, R.drawable.justin3,
             R.drawable.rock1, R.drawable.rock2, R.drawable.laudaitinhai, R.drawable.khutaosong
     };
-
     private String[] genres = {
             "R&B", "Pop", "Pop", "Pop", "Pop", "Pop", "R&B", "Japanese",
             "Rap", "Rap", "Pop", "Pop", "Rock", "Rock", "Pop", "Rap"
     };
 
+
     private MediaPlayerManager() {
+        // Private constructor to enforce singleton pattern
+    }
+
+    public static MediaPlayerManager getInstance() {
+        if (instance == null) {
+            instance = new MediaPlayerManager();
+        }
+        return instance;
+    }
+
+    public void playSong(Context context, int songResource, String songTitle, String artistName, int albumCoverResource) {
+        if (mediaPlayer != null) {
+            try {
+                if (mediaPlayer.isPlaying()) {
+                    mediaPlayer.stop();
+                }
+                mediaPlayer.reset();
+                mediaPlayer.release();
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+            }
+        }
+
+        currentSongTitle = songTitle;
+        currentArtistName = artistName;
+        currentAlbumCoverResource = albumCoverResource;
+        currentSongResource = songResource;
+
+        try {
+            mediaPlayer = MediaPlayer.create(context, songResource);
+            mediaPlayer.setOnCompletionListener(mp -> stopSong());
+            mediaPlayer.start();
+            startForegroundNotification(context); // Start notification
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        notifyPlaybackStateChange();
+    }
+
+    public void stopSong() {
+        if (mediaPlayer != null) {
+            mediaPlayer.stop();
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
+        if (notificationManager != null) {
+            notificationManager.cancel(1); // Dismiss notification
+        }
+        notifyPlaybackStateChange();
+    }
+
+    public void pauseSong() {
+        if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+            mediaPlayer.pause();
+            notifyPlaybackStateChange();
+        }
+    }
+
+    public void resumeSong() {
+        if (mediaPlayer != null && !mediaPlayer.isPlaying()) {
+            mediaPlayer.start();
+            notifyPlaybackStateChange();
+        }
+    }
+
+    public void playNextSong(Context context) {
+        currentSongIndex = (currentSongIndex + 1) % songResources.length;
+        playSong(context, songResources[currentSongIndex], songTitles[currentSongIndex],
+                artistNames[currentSongIndex], albumCoverResources[currentSongIndex]);
+    }
+
+    public void playPreviousSong(Context context) {
+        currentSongIndex = (currentSongIndex - 1 + songResources.length) % songResources.length;
+        playSong(context, songResources[currentSongIndex], songTitles[currentSongIndex],
+                artistNames[currentSongIndex], albumCoverResources[currentSongIndex]);
+    }
+
+    public boolean isPlaying() {
+        return mediaPlayer != null && mediaPlayer.isPlaying();
+    }
+
+    public String getCurrentSongTitle() {
+        return currentSongTitle;
+    }
+
+    public String getCurrentArtistName() {
+        return currentArtistName;
+    }
+
+    public int getCurrentAlbumCoverResource() {
+        return currentAlbumCoverResource;
+    }
+
+
+
+    public void registerPlaybackStateListener(PlaybackStateListener listener) {
+        listeners.add(listener);
+    }
+
+    public void unregisterPlaybackStateListener(PlaybackStateListener listener) {
+        listeners.remove(listener);
+    }
+
+    private void notifyPlaybackStateChange() {
+        for (PlaybackStateListener listener : listeners) {
+            listener.onPlaybackStateChanged();
+        }
+    }
+    public void pauseOrResumeSong() {
+        if (mediaPlayer != null) {
+            if (mediaPlayer.isPlaying()) {
+                mediaPlayer.pause(); // Pause the song if it's currently playing
+            } else {
+                mediaPlayer.start(); // Resume the song if it's paused
+            }
+            notifyPlaybackStateChange(); // Notify listeners about the playback state change
+        }
+    }
+    public void addCurrentSongToPlaylist(Context context) {
+        PlaylistManager playlistManager = PlaylistManager.getInstance(context);
+        if (playlistManager.isSongInPlaylist(currentSongTitle, currentArtistName)) {
+            Toast.makeText(context, "Song is already in the playlist", Toast.LENGTH_SHORT).show();
+        } else {
+            playlistManager.addSongToPlaylist(
+                    currentSongTitle,
+                    currentArtistName,
+                    currentSongResource,
+                    currentAlbumCoverResource
+            );
+            Toast.makeText(context, "Song added to playlist", Toast.LENGTH_SHORT).show();
+        }
+    }
+    public void seekTo(int position) {
+        if (mediaPlayer != null) {
+            mediaPlayer.seekTo(position); // Move playback to the specified position
+        }
+    }
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    public void setPlaybackSpeed(float speed) {
+        if (mediaPlayer != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            mediaPlayer.setPlaybackParams(mediaPlayer.getPlaybackParams().setSpeed(speed));
+        }
+    }
+    public int getCurrentSongResource() {
+        return currentSongResource; // Return the resource ID of the currently playing song
+    }
+
+
+    private void startForegroundNotification(Context context) {
+        createNotificationChannel(context);
+
+        Intent intent = new Intent(context, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+
+        Notification notification = new NotificationCompat.Builder(context, CHANNEL_ID)
+                .setContentTitle(currentSongTitle)
+                .setContentText(currentArtistName)
+                .setSmallIcon(R.drawable.musiclogo)
+                .setContentIntent(pendingIntent)
+                .setStyle(new androidx.media.app.NotificationCompat.MediaStyle())
+                .build();
+
+        notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(1, notification);
+    }
+
+    private void createNotificationChannel(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(
+                    CHANNEL_ID,
+                    "Music Playback",
+                    NotificationManager.IMPORTANCE_LOW
+            );
+            channel.setDescription("Notification channel for music playback");
+            NotificationManager manager = context.getSystemService(NotificationManager.class);
+            if (manager != null) {
+                manager.createNotificationChannel(channel);
+            }
+        }
     }
     // Method to get songs by artist
     public List<Song> getSongsByArtist(String artist) {
@@ -173,228 +356,6 @@ public class MediaPlayerManager {
             return mediaPlayer.getCurrentPosition(); // Returns the current position in milliseconds
         }
         return 0; // Return 0 if no song is currently playing
-    }
-
-
-
-
-    public static MediaPlayerManager getInstance() {
-        if (instance == null) {
-            instance = new MediaPlayerManager();
-        }
-        return instance;
-    }
-
-    public void registerPlaybackStateListener(PlaybackStateListener listener) {
-        listeners.add(listener);
-    }
-
-    public void unregisterPlaybackStateListener(PlaybackStateListener listener) {
-        listeners.remove(listener);
-    }
-
-    private void notifyPlaybackStateChange() {
-        for (PlaybackStateListener listener : listeners) {
-            listener.onPlaybackStateChanged();
-        }
-    }
-    public int getCurrentSongResource() {
-        return currentSongResource; // Return the resource ID of the currently playing song
-    }
-    public void addCurrentSongToPlaylist(Context context) {
-        PlaylistManager playlistManager = PlaylistManager.getInstance(context);
-        if (playlistManager.isSongInPlaylist(currentSongTitle, currentArtistName)) {
-            Toast.makeText(context, "Song is already in the playlist", Toast.LENGTH_SHORT).show();
-        } else {
-            playlistManager.addSongToPlaylist(
-                    currentSongTitle,
-                    currentArtistName,
-                    currentSongResource,
-                    currentAlbumCoverResource
-            );
-            Toast.makeText(context, "Song added to playlist", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    // Method to seek to a specific position in the song
-    public void seekTo(int position) {
-        if (mediaPlayer != null) {
-            mediaPlayer.seekTo(position);
-        }
-    }
-
-
-
-
-    public void playSong(Context context, int songResource, String songTitle, String artistName, int albumCoverResource) {
-        if (mediaPlayer != null) {
-            try {
-                if (mediaPlayer.isPlaying()) {
-                    mediaPlayer.stop();
-                }
-                mediaPlayer.reset();
-                mediaPlayer.release();
-            } catch (IllegalStateException e) {
-                e.printStackTrace();
-            }
-        }
-
-        currentSongTitle = songTitle;
-        currentArtistName = artistName;
-        currentAlbumCoverResource = albumCoverResource;
-        currentSongResource = songResource;
-
-        try {
-            mediaPlayer = MediaPlayer.create(context, songResource);
-            mediaPlayer.setOnCompletionListener(mp -> stopSong());
-            mediaPlayer.start();
-            updateNotification(context, true);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        notifyPlaybackStateChange();
-    }
-
-    public void stopSong() {
-        if (mediaPlayer != null) {
-            mediaPlayer.stop();
-            mediaPlayer.release();
-            mediaPlayer = null;
-        }
-        if (notificationManager != null) {
-            notificationManager.cancel(1); // Dismiss notification
-        }
-        notifyPlaybackStateChange();
-    }
-
-    public void pauseSong() {
-        try {
-            if (mediaPlayer != null && mediaPlayer.isPlaying()) {
-                mediaPlayer.pause();
-                notifyPlaybackStateChange(); // Notify listeners about the pause state
-            }
-        } catch (IllegalStateException e) {
-            e.printStackTrace(); // Log any illegal state issues
-        }
-    }
-
-
-    public void resumeSong() {
-        try {
-            if (mediaPlayer != null && !mediaPlayer.isPlaying()) {
-                mediaPlayer.start();
-                notifyPlaybackStateChange(); // Notify listeners about the play state
-            }
-        } catch (IllegalStateException e) {
-            e.printStackTrace(); // Log any illegal state issues
-        }
-    }
-
-
-    public void playNextSong(Context context) {
-        currentSongIndex = (currentSongIndex + 1) % songResources.length;
-        playSong(context, songResources[currentSongIndex], songTitles[currentSongIndex],
-                artistNames[currentSongIndex], albumCoverResources[currentSongIndex]);
-    }
-
-    public void playPreviousSong(Context context) {
-        currentSongIndex = (currentSongIndex - 1 + songResources.length) % songResources.length;
-        playSong(context, songResources[currentSongIndex], songTitles[currentSongIndex],
-                artistNames[currentSongIndex], albumCoverResources[currentSongIndex]);
-    }
-
-    public boolean isPlaying() {
-        return mediaPlayer != null && mediaPlayer.isPlaying();
-    }
-
-    public String getCurrentSongTitle() {
-        return currentSongTitle;
-    }
-
-    public String getCurrentArtistName() {
-        return currentArtistName;
-    }
-
-    public int getCurrentAlbumCoverResource() {
-        return currentAlbumCoverResource;
-    }
-
-    public MediaSessionCompat getMediaSession(Context context) {
-        if (mediaSession == null) {
-            mediaSession = new MediaSessionCompat(context, "MyMediaSession");
-        }
-        return mediaSession;
-    }
-
-    public void pauseOrResumeSong() {
-        if (mediaPlayer != null) {
-            if (mediaPlayer.isPlaying()) {
-                mediaPlayer.pause();
-            } else {
-                mediaPlayer.start();
-            }
-            notifyPlaybackStateChange();
-        }
-    }
-
-    public void stopSongDueToCountdown() {
-        if (mediaPlayer != null) {
-            mediaPlayer.stop();
-            mediaPlayer.release();
-            mediaPlayer = null;
-        }
-        notifyPlaybackStateChange();
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.M)
-    public void setPlaybackSpeed(float speed) {
-        if (mediaPlayer != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            mediaPlayer.setPlaybackParams(mediaPlayer.getPlaybackParams().setSpeed(speed));
-        }
-    }
-
-    private void updateNotification(Context context, boolean isPlaying) {
-        if (notificationManager == null && context != null) {
-            notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        }
-
-        PendingIntent playPauseIntent = PendingIntent.getBroadcast(
-                context, 0, new Intent(context, MediaNotificationReceiver.class)
-                        .setAction(isPlaying ? "ACTION_PAUSE" : "ACTION_PLAY"), PendingIntent.FLAG_UPDATE_CURRENT
-        );
-
-        PendingIntent nextIntent = PendingIntent.getBroadcast(
-                context, 0, new Intent(context, MediaNotificationReceiver.class)
-                        .setAction("ACTION_NEXT"), PendingIntent.FLAG_UPDATE_CURRENT
-        );
-
-        PendingIntent previousIntent = PendingIntent.getBroadcast(
-                context, 0, new Intent(context, MediaNotificationReceiver.class)
-                        .setAction("ACTION_PREVIOUS"), PendingIntent.FLAG_UPDATE_CURRENT
-        );
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(
-                    CHANNEL_ID,
-                    "Music Player Notifications",
-                    NotificationManager.IMPORTANCE_LOW
-            );
-            notificationManager.createNotificationChannel(channel);
-        }
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
-                .setSmallIcon(R.drawable.musiclogo)
-                .setContentTitle(currentSongTitle)
-                .setContentText(currentArtistName)
-                .addAction(R.drawable.ic_previous, "Previous", previousIntent)
-                .addAction(isPlaying ? R.drawable.ic_pause : R.drawable.ic_play, "Play/Pause", playPauseIntent)
-                .addAction(R.drawable.ic_next, "Next", nextIntent)
-                .setPriority(NotificationCompat.PRIORITY_LOW)
-                .setOngoing(isPlaying)
-                .setStyle(new androidx.media.app.NotificationCompat.MediaStyle());
-
-        notificationManager.notify(1, builder.build());
     }
 
     public interface PlaybackStateListener {

@@ -1,6 +1,9 @@
 package com.tdtu.my_music_player.PlayerSet;
 
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.os.Bundle;
@@ -22,6 +25,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.tdtu.my_music_player.MediaManager.MediaPlayerManager;
+import com.tdtu.my_music_player.MediaManager.MediaPlayerService;
+import com.tdtu.my_music_player.Notification.NotificationPanel;
 import com.tdtu.my_music_player.R;
 import com.tdtu.my_music_player.Time.TimerDialogFragment;
 
@@ -99,6 +104,17 @@ public class PlayFragment extends Fragment {
             e.printStackTrace(); // Log any exceptions
         }
     }
+    // Example: Starting the MediaPlayerService when a new song is played
+    private void playSong(int songResource, String songTitle, String artistName, int albumCoverResource) {
+        // Update the MediaPlayerManager with the new song details
+        MediaPlayerManager mediaPlayerManager = MediaPlayerManager.getInstance();
+        mediaPlayerManager.playSong(requireContext(), songResource, songTitle, artistName, albumCoverResource);
+
+        // Start the MediaPlayerService
+        startMediaPlayerService(requireContext());
+    }
+
+
 
 
     private void playNextSong() {
@@ -130,6 +146,7 @@ public class PlayFragment extends Fragment {
                     mediaPlayerManager.seekTo(progress);
                 }
             }
+
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
@@ -258,10 +275,12 @@ public class PlayFragment extends Fragment {
         super.onResume();
         restoreTimerState(); // Restore the timer state when returning to the fragment
     }
-
-
-
-
+    private void startMediaPlayerService(Context context) {
+        // Create an intent for the MediaPlayerService
+        Intent intent = new Intent(context, MediaPlayerService.class);
+        // Start the service
+        context.startService(intent);
+    }
 
 
 
@@ -321,3 +340,4 @@ public class PlayFragment extends Fragment {
         return String.format("%d:%02d", minutes, seconds);
     }
 }
+

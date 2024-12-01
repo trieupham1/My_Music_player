@@ -93,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
     // Initialize Navigation Components
     private void initializeNavigation() {
         BottomNavigationView navView = findViewById(R.id.bottom_navigation);
