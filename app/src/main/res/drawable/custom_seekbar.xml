@@ -4,20 +4,20 @@
     <item android:gravity="center_vertical">
         <shape android:shape="rectangle">
             <solid android:color="#605A5C"/>
-            <size android:height="20dp"/>
+            <size android:height="15dp"/>
             <corners android:radius="9dp"/>
         </shape>
     </item>
-    <!-- color, size, shape height of seekbar when u drag it-->
+    <!-- color, size, shape height of seekbar when drag it-->
     <item android:gravity="center_vertical">
-        <scale android:scaleWidth="100%">
+        <scale android:scaleWidth="98%">
             <selector>
                 <item android:state_enabled="false"
                     android:drawable="@color/dark_gray"/>
                 <item>
                     <shape android:shape="rectangle">
-                        <solid android:color="@color/secondaryBackground"/>
-                        <size android:height="20dp"/>
+                        <solid android:color="@color/dark_gray"/>
+                        <size android:height="15dp"/>
                         <corners android:radius="9dp"/>
                     </shape>
                 </item>

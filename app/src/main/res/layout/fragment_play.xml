@@ -60,7 +60,7 @@
         <!-- Start/Stop Timer Button -->
         <Button
             android:id="@+id/btn_start_timer"
-            android:layout_width="110dp"
+            android:layout_width="115dp"
             android:layout_height="40dp"
             android:layout_gravity="center"
             android:layout_marginTop="8dp"
