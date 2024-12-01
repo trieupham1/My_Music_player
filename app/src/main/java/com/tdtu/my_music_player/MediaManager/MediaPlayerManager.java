@@ -106,7 +106,6 @@ public class MediaPlayerManager {
             mediaPlayer = MediaPlayer.create(context, songResource);
             mediaPlayer.setOnCompletionListener(mp -> stopSong());
             mediaPlayer.start();
-            startForegroundNotification(context); // Start notification
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -223,38 +222,8 @@ public class MediaPlayerManager {
     }
 
 
-    private void startForegroundNotification(Context context) {
-        createNotificationChannel(context);
 
-        Intent intent = new Intent(context, MainActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
 
-        Notification notification = new NotificationCompat.Builder(context, CHANNEL_ID)
-                .setContentTitle(currentSongTitle)
-                .setContentText(currentArtistName)
-                .setSmallIcon(R.drawable.musiclogo)
-                .setContentIntent(pendingIntent)
-                .setStyle(new androidx.media.app.NotificationCompat.MediaStyle())
-                .build();
-
-        notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(1, notification);
-    }
-
-    private void createNotificationChannel(Context context) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(
-                    CHANNEL_ID,
-                    "Music Playback",
-                    NotificationManager.IMPORTANCE_LOW
-            );
-            channel.setDescription("Notification channel for music playback");
-            NotificationManager manager = context.getSystemService(NotificationManager.class);
-            if (manager != null) {
-                manager.createNotificationChannel(channel);
-            }
-        }
-    }
     // Method to get songs by artist
     public List<Song> getSongsByArtist(String artist) {
         List<Song> filteredSongs = new ArrayList<>();

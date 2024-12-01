@@ -23,6 +23,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.tdtu.my_music_player.MediaManager.MediaPlayerManager;
 import com.tdtu.my_music_player.MediaManager.MediaPlayerService;
@@ -247,6 +249,17 @@ public class PlayFragment extends Fragment {
         editor.putLong("startTime", startTime);
         editor.apply();
     }
+    private void navigateToPlayFragment() {
+        NavHostFragment navHostFragment = (NavHostFragment) requireActivity()
+                .getSupportFragmentManager()
+                .findFragmentById(R.id.nav_host_fragment);
+        if (navHostFragment != null) {
+            NavController navController = navHostFragment.getNavController();
+            navController.navigate(R.id.navigation_play); // Navigate to PlayFragment
+        }
+    }
+
+
 
     private void restoreTimerState() {
         SharedPreferences sharedPreferences = requireContext().getSharedPreferences("TimerPrefs", Context.MODE_PRIVATE);

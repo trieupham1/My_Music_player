@@ -16,6 +16,7 @@ import com.tdtu.my_music_player.Artists.ArtistSongsActivity;
 import com.tdtu.my_music_player.CategoriesSet.CategoriesAdapter;
 import com.tdtu.my_music_player.CategoriesSet.MusicCategoryActivity;
 import com.tdtu.my_music_player.Genres.GenreSongsActivity;
+import com.tdtu.my_music_player.PlayerSet.MainActivity;
 import com.tdtu.my_music_player.R;
 
 import java.util.ArrayList;
@@ -105,4 +106,21 @@ public class HomeFragment extends Fragment {
 
         return view;
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Update the mini-player UI
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).updateMiniPlayerUI();
+        }
+
+        if (categoriesRecyclerView != null) categoriesRecyclerView.requestFocus();
+        if (artistRecyclerView != null) artistRecyclerView.requestFocus();
+        if (genreRecyclerView != null) genreRecyclerView.requestFocus();
+    }
 }
+
+
+
+

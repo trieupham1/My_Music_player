@@ -1,15 +1,21 @@
-// MainActivity.java
 package com.tdtu.my_music_player.PlayerSet;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -19,6 +25,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.tdtu.my_music_player.LoginRegister.AuthActivity;
 import com.tdtu.my_music_player.MediaManager.MediaPlayerManager;
+import com.tdtu.my_music_player.MediaManager.MediaPlayerService;
 import com.tdtu.my_music_player.R;
 
 public class MainActivity extends AppCompatActivity {
@@ -29,16 +36,19 @@ public class MainActivity extends AppCompatActivity {
     private ImageView imgAlbumCover;
     private MediaPlayerManager mediaPlayerManager;
 
-    // Firebase Authentication
+    private static final int POST_NOTIFICATIONS_PERMISSION_REQUEST_CODE = 101;
+
     private FirebaseAuth auth;
 
-    // Listener to sync PlayFragment with the mini-player
     private OnPlayerStatusChangedListener onPlayerStatusChangedListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Check notification permission (Android 13 and above)
+        checkNotificationPermission();
 
         // Initialize Firebase Authentication
         auth = FirebaseAuth.getInstance();
@@ -58,43 +68,85 @@ public class MainActivity extends AppCompatActivity {
         // Set up MediaPlayerManager
         mediaPlayerManager = MediaPlayerManager.getInstance();
 
-        // Check for any song passed via intent to play
+        // Start the MediaPlayerService
+        startMediaService();
+
+        // Handle intent to navigate to PlayFragment
         handleIntent(getIntent());
 
         btnPlayPause.setOnClickListener(v -> {
             mediaPlayerManager.pauseOrResumeSong();
             updateMiniPlayerUI();
-            notifyPlayFragment(); // Notify PlayFragment to stay in sync
+            notifyPlayFragment();
         });
 
         btnNext.setOnClickListener(v -> {
             playNextSong();
-            notifyPlayFragment(); // Notify PlayFragment to stay in sync
+            notifyPlayFragment();
         });
 
         btnPrevious.setOnClickListener(v -> {
             playPreviousSong();
-            notifyPlayFragment(); // Notify PlayFragment to stay in sync
+            notifyPlayFragment();
         });
-
     }
 
-    // Handle the intent passed from other activities (like playing a song)
-    private void handleIntent(Intent intent) {
-        if (intent != null && intent.getBooleanExtra("playSong", false)) {
-            String songTitle = intent.getStringExtra("songTitle");
-            String artistName = intent.getStringExtra("artistName");
-            int songResource = intent.getIntExtra("songResource", -1);
-            int albumCoverResource = intent.getIntExtra("albumCoverResource", -1);
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        handleIntent(intent);
+    }
 
-            if (songResource != -1) {
-                playSelectedSong(songTitle, artistName, songResource, albumCoverResource);
+    private void handleIntent(Intent intent) {
+        if (intent != null) {
+            // Check if intent is from the notification to navigate to PlayFragment
+            if ("Player".equals(intent.getStringExtra("navigateTo"))) {
+                NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
+                        .findFragmentById(R.id.nav_host_fragment);
+                if (navHostFragment != null) {
+                    NavController navController = navHostFragment.getNavController();
+                    navController.navigate(R.id.navigation_play); // Navigate to PlayFragment
+                }
+            }
+
+            // Check for any song passed via intent to play
+            if (intent.getBooleanExtra("playSong", false)) {
+                String songTitle = intent.getStringExtra("songTitle");
+                String artistName = intent.getStringExtra("artistName");
+                int songResource = intent.getIntExtra("songResource", -1);
+                int albumCoverResource = intent.getIntExtra("albumCoverResource", -1);
+
+                if (songResource != -1) {
+                    playSelectedSong(songTitle, artistName, songResource, albumCoverResource);
+                }
             }
         }
     }
 
 
-    // Initialize Navigation Components
+
+    private void checkNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.POST_NOTIFICATIONS},
+                        POST_NOTIFICATIONS_PERMISSION_REQUEST_CODE);
+            }
+        }
+    }
+
+    private void startMediaService() {
+        Intent intent = new Intent(this, MediaPlayerService.class);
+        startService(intent);
+    }
+
+    private void stopMediaService() {
+        Intent intent = new Intent(this, MediaPlayerService.class);
+        stopService(intent);
+    }
+
     private void initializeNavigation() {
         BottomNavigationView navView = findViewById(R.id.bottom_navigation);
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
@@ -110,7 +162,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // Initialize the media player views in the mini-player panel
     private void initializePlayerViews() {
         bottomPlayerPanel = findViewById(R.id.bottom_player_panel);
         tvSongTitle = findViewById(R.id.tv_song_title);
@@ -121,73 +172,113 @@ public class MainActivity extends AppCompatActivity {
         imgAlbumCover = findViewById(R.id.img_album_cover);
     }
 
-    // Play the selected song and update the UI
     public void playSelectedSong(String songTitle, String artistName, int songResource, int albumCoverResource) {
         mediaPlayerManager.playSong(this, songResource, songTitle, artistName, albumCoverResource);
         updateMiniPlayerUI();
         notifyPlayFragment();
     }
 
-    // Play the next song
     private void playNextSong() {
         mediaPlayerManager.playNextSong(this);
         updateMiniPlayerUI();
         notifyPlayFragment();
     }
 
-    // Play the previous song
     private void playPreviousSong() {
         mediaPlayerManager.playPreviousSong(this);
         updateMiniPlayerUI();
         notifyPlayFragment();
     }
 
-    // Update the mini-player UI with the current song details
     public void updateMiniPlayerUI() {
         if (mediaPlayerManager.isPlaying()) {
             tvSongTitle.setText(mediaPlayerManager.getCurrentSongTitle());
             tvArtistName.setText(mediaPlayerManager.getCurrentArtistName());
             imgAlbumCover.setImageResource(mediaPlayerManager.getCurrentAlbumCoverResource());
             btnPlayPause.setImageResource(R.drawable.ic_pause);
-            bottomPlayerPanel.setVisibility(View.VISIBLE); // Make mini-player visible
+            bottomPlayerPanel.setVisibility(View.VISIBLE);
         } else {
             btnPlayPause.setImageResource(R.drawable.ic_play);
+
         }
     }
 
+
     private void notifyPlayFragment() {
         if (onPlayerStatusChangedListener != null) {
-            onPlayerStatusChangedListener.onPlayerStatusChanged(); // Notify PlayFragment
+            onPlayerStatusChangedListener.onPlayerStatusChanged();
         }
+    }
 
-        // Update the big player in the nav host when the mini-player is clicked
+    public void setOnPlayerStatusChangedListener(OnPlayerStatusChangedListener listener) {
+        this.onPlayerStatusChangedListener = listener;
+    }
+    @Override
+    public void onBackPressed() {
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.nav_host_fragment);
         if (navHostFragment != null) {
-            PlayFragment playFragment = (PlayFragment) navHostFragment.getChildFragmentManager()
-                    .findFragmentById(R.id.navigation_play);
-            if (playFragment != null) {
-                playFragment.updateUI();
+            NavController navController = navHostFragment.getNavController();
+            if (!navController.popBackStack()) {
+                super.onBackPressed(); // Close the app if no fragments in back stack
+            }
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    // Always show the mini-player on navigation changes
+    private void handleNavigationVisibility() {
+        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.nav_host_fragment);
+        if (navHostFragment != null) {
+            navHostFragment.getNavController().addOnDestinationChangedListener((controller, destination, arguments) -> {
+                if (destination.getId() == R.id.navigation_play) {
+                    bottomPlayerPanel.setVisibility(View.GONE); // Hide mini-player
+                } else {
+                    bottomPlayerPanel.setVisibility(View.VISIBLE); // Show mini-player
+                }
+            });
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        resetFragmentInteractivity();
+    }
+
+    /**
+     * Ensures all fragments are interactive when returning to the app.
+     */
+    private void resetFragmentInteractivity() {
+        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.nav_host_fragment);
+        if (navHostFragment != null) {
+            for (Fragment fragment : navHostFragment.getChildFragmentManager().getFragments()) {
+                if (fragment != null && fragment.getView() != null) {
+                    fragment.getView().setFocusableInTouchMode(true);
+                    fragment.getView().requestFocus();
+                }
             }
         }
     }
 
 
 
-    public void setOnPlayerStatusChangedListener(OnPlayerStatusChangedListener listener) {
-        this.onPlayerStatusChangedListener = listener;
-    }
+
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        stopMediaService();
         if (mediaPlayerManager != null) {
             mediaPlayerManager.stopSong();
         }
     }
 
-    // Interface to notify the PlayFragment of player status changes
     public interface OnPlayerStatusChangedListener {
         void onPlayerStatusChanged();
     }
 }
+
