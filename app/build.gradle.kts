@@ -62,8 +62,7 @@ dependencies {
     // Gson for JSON parsing
     implementation("com.google.code.gson:gson:2.8.9")
 
-    // Facebook SDK for social sharing
-    implementation("com.facebook.android:facebook-android-sdk:15.1.0")
+
 
     // Testing dependencies
     testImplementation(libs.junit)

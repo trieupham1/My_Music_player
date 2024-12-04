@@ -70,14 +70,6 @@
             android:contentDescription="Next" />
     </LinearLayout>
 
-    <!-- SeekBar -->
-    <SeekBar
-        android:id="@+id/notification_seekbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:max="100"
-        android:progress="0"
-        android:progressDrawable="@drawable/custom_seekbar"
-        android:thumb="@drawable/thumb" />
+
+
 </LinearLayout>

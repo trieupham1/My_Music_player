@@ -49,7 +49,6 @@ public class PlayFragment extends Fragment {
     private static final String TIMER_RUNNING = "isRunning";
 
 
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -71,8 +70,7 @@ public class PlayFragment extends Fragment {
         volumeBar = view.findViewById(R.id.volumeBar);
         speedBar = view.findViewById(R.id.speedBar);
         imgAlbumCover = view.findViewById(R.id.img_album_cover);
-        Button btnShare = view.findViewById(R.id.btn_share);
-        btnShare.setOnClickListener(v -> shareCurrentSong());
+
 
         // Initialize MediaPlayerManager
         mediaPlayerManager = MediaPlayerManager.getInstance();
@@ -108,6 +106,7 @@ public class PlayFragment extends Fragment {
             e.printStackTrace(); // Log any exceptions
         }
     }
+
     // Example: Starting the MediaPlayerService when a new song is played
     private void playSong(int songResource, String songTitle, String artistName, int albumCoverResource) {
         // Update the MediaPlayerManager with the new song details
@@ -117,9 +116,6 @@ public class PlayFragment extends Fragment {
         // Start the MediaPlayerService
         startMediaPlayerService(requireContext());
     }
-
-
-
 
 
     private void playNextSong() {
@@ -184,7 +180,6 @@ public class PlayFragment extends Fragment {
         // Start the periodic updates
         handler.post(updateSeekBarRunnable);
     }
-
 
 
     private void setupSleepTimer() {
@@ -252,6 +247,7 @@ public class PlayFragment extends Fragment {
         editor.putLong("startTime", startTime);
         editor.apply();
     }
+
     private void navigateToPlayFragment() {
         NavHostFragment navHostFragment = (NavHostFragment) requireActivity()
                 .getSupportFragmentManager()
@@ -261,7 +257,6 @@ public class PlayFragment extends Fragment {
             navController.navigate(R.id.navigation_play); // Navigate to PlayFragment
         }
     }
-
 
 
     private void restoreTimerState() {
@@ -291,14 +286,13 @@ public class PlayFragment extends Fragment {
         super.onResume();
         restoreTimerState(); // Restore the timer state when returning to the fragment
     }
+
     private void startMediaPlayerService(Context context) {
         // Create an intent for the MediaPlayerService
         Intent intent = new Intent(context, MediaPlayerService.class);
         // Start the service
         context.startService(intent);
     }
-
-
 
 
     private void setupVolumeControl() {
@@ -313,10 +307,12 @@ public class PlayFragment extends Fragment {
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {}
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
 
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {}
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
         });
     }
 
@@ -333,10 +329,12 @@ public class PlayFragment extends Fragment {
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {}
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
 
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {}
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
         });
     }
 
@@ -356,18 +354,6 @@ public class PlayFragment extends Fragment {
         int minutes = (milliseconds / 1000) / 60;
         int seconds = (milliseconds / 1000) % 60;
         return String.format("%d:%02d", minutes, seconds);
-    }
-    private void shareCurrentSong() {
-        String songTitle = mediaPlayerManager.getCurrentSongTitle(); // Get song title
-        String artistName = mediaPlayerManager.getCurrentArtistName(); // Get artist name
-        String songLink = "https://example.com/song/" + songTitle.replaceAll(" ", "_"); // Example link
-
-        Intent shareIntent = new Intent(Intent.ACTION_SEND);
-        shareIntent.setType("text/plain");
-        String shareMessage = "🎶 I'm listening to \"" + songTitle + "\" by " + artistName + "! Check it out: " + songLink;
-        shareIntent.putExtra(Intent.EXTRA_TEXT, shareMessage);
-
-        startActivity(Intent.createChooser(shareIntent, "Share via"));
     }
 }
 
