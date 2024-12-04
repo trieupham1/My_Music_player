@@ -80,10 +80,13 @@ public class MediaPlayerService extends Service {
         notificationLayout.setTextViewText(R.id.notification_artist_name, artistName);
         notificationLayout.setImageViewResource(R.id.notification_album_cover, albumCoverResourceId);
 
-        // Set up intent to navigate to the PlayFragment
+        // Dynamically set the play/pause icon
+        int playPauseIcon = isPlaying ? R.drawable.ic_pause : R.drawable.ic_play;
+        notificationLayout.setImageViewResource(R.id.notification_play_pause_button, playPauseIcon);
+
+        // Set up intent to resume the app
         Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra("navigateTo", "Player"); // Add the navigateTo key to specify PlayFragment
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // Ensure MainActivity is always brought to the front
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent contentIntent = PendingIntent.getActivity(
                 this,
                 0,
@@ -117,13 +120,11 @@ public class MediaPlayerService extends Service {
                 .setSmallIcon(R.drawable.musiclogo)
                 .setCustomContentView(notificationLayout)
                 .setCustomBigContentView(notificationLayout)
-                .setContentIntent(contentIntent) // Set the content intent
+                .setContentIntent(contentIntent)
                 .setPriority(NotificationCompat.PRIORITY_LOW)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .build();
     }
-
-
 
 
     private void updateNotification() {

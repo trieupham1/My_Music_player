@@ -100,17 +100,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void handleIntent(Intent intent) {
         if (intent != null) {
-            // Check if intent is from the notification to navigate to PlayFragment
-            if ("Player".equals(intent.getStringExtra("navigateTo"))) {
-                NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
-                        .findFragmentById(R.id.nav_host_fragment);
-                if (navHostFragment != null) {
-                    NavController navController = navHostFragment.getNavController();
-                    navController.navigate(R.id.navigation_play); // Navigate to PlayFragment
-                }
-            }
-
-            // Check for any song passed via intent to play
+            // Remove the navigation logic for "navigateTo"
             if (intent.getBooleanExtra("playSong", false)) {
                 String songTitle = intent.getStringExtra("songTitle");
                 String artistName = intent.getStringExtra("artistName");
@@ -123,8 +113,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
-
 
     private void checkNotificationPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
