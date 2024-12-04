@@ -71,6 +71,8 @@ public class PlayFragment extends Fragment {
         volumeBar = view.findViewById(R.id.volumeBar);
         speedBar = view.findViewById(R.id.speedBar);
         imgAlbumCover = view.findViewById(R.id.img_album_cover);
+        Button btnShare = view.findViewById(R.id.btn_share);
+        btnShare.setOnClickListener(v -> shareCurrentSong());
 
         // Initialize MediaPlayerManager
         mediaPlayerManager = MediaPlayerManager.getInstance();
@@ -115,6 +117,7 @@ public class PlayFragment extends Fragment {
         // Start the MediaPlayerService
         startMediaPlayerService(requireContext());
     }
+
 
 
 
@@ -317,6 +320,7 @@ public class PlayFragment extends Fragment {
         });
     }
 
+
     private void setupSpeedControl() {
         speedBar.setMax(20); // 0.5x to 2.0x speed
         speedBar.setProgress(10); // Default speed: 1.0x
@@ -347,10 +351,25 @@ public class PlayFragment extends Fragment {
         tvCurrentTime.setText(formatTime(mediaPlayerManager.getCurrentPosition()));
     }
 
+
     private String formatTime(int milliseconds) {
         int minutes = (milliseconds / 1000) / 60;
         int seconds = (milliseconds / 1000) % 60;
         return String.format("%d:%02d", minutes, seconds);
     }
+    private void shareCurrentSong() {
+        String songTitle = mediaPlayerManager.getCurrentSongTitle(); // Get song title
+        String artistName = mediaPlayerManager.getCurrentArtistName(); // Get artist name
+        String songLink = "https://example.com/song/" + songTitle.replaceAll(" ", "_"); // Example link
+
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+        String shareMessage = "🎶 I'm listening to \"" + songTitle + "\" by " + artistName + "! Check it out: " + songLink;
+        shareIntent.putExtra(Intent.EXTRA_TEXT, shareMessage);
+
+        startActivity(Intent.createChooser(shareIntent, "Share via"));
+    }
 }
+
+
 

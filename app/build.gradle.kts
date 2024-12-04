@@ -19,13 +19,16 @@ android {
 
     buildTypes {
         release {
-            // Enable ProGuard for shrinking, obfuscation, and resource shrinking
-            isMinifyEnabled = true
-            isShrinkResources = true // This helps to remove unused resources
+            isMinifyEnabled = true // Enable ProGuard for shrinking and obfuscation
+            isShrinkResources = true // Remove unused resources
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }
+        debug {
+            isMinifyEnabled = false // Debug builds do not require shrinking
+            isShrinkResources = false
         }
     }
 
@@ -36,39 +39,37 @@ android {
 }
 
 dependencies {
-    // Firebase BOM to manage all Firebase versions
+    // Firebase BOM to align versions of Firebase dependencies
     implementation(platform("com.google.firebase:firebase-bom:33.4.0"))
 
-    // Firebase Authentication library
+    // Firebase services
     implementation("com.google.firebase:firebase-auth")
-
-    // Firebase Analytics and Firestore, if applicable
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-firestore")
+    implementation("com.google.firebase:firebase-database")
 
-    // Other dependencies (AndroidX, UI components, etc.)
+    // AndroidX and Material Design libraries
     implementation(libs.navigation.fragment)
     implementation(libs.navigation.ui)
     implementation(libs.material)
     implementation(libs.appcompat)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
-    implementation(libs.firebase.database)
-    implementation(libs.recyclerview)
+    implementation("androidx.recyclerview:recyclerview:1.3.0")
+    implementation("androidx.media:media:1.6.0")
+    implementation("androidx.core:core-ktx:1.10.1")
+
+    // Gson for JSON parsing
+    implementation("com.google.code.gson:gson:2.8.9")
+
+    // Facebook SDK for social sharing
+    implementation("com.facebook.android:facebook-android-sdk:15.1.0")
 
     // Testing dependencies
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
-    implementation("androidx.recyclerview:recyclerview:1.3.0") // Updated version
-
-
-    implementation ("androidx.media:media:1.6.0")
-    implementation ("androidx.core:core-ktx:1.10.1")
-    implementation ("com.google.code.gson:gson:2.8.9")
-    implementation ("androidx.media:media:1.6.0")
-
 }
 
-// Apply the Google Services plugin at the end of the file
+// Apply the Google Services plugin for Firebase integration
 apply(plugin = "com.google.gms.google-services")
