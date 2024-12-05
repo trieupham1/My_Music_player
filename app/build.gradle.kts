@@ -62,7 +62,7 @@ dependencies {
     // Gson for JSON parsing
     implementation("com.google.code.gson:gson:2.8.9")
 
-
+    implementation ("androidx.palette:palette:1.0.0")
 
     // Testing dependencies
     testImplementation(libs.junit)

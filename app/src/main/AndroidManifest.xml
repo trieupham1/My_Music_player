@@ -25,6 +25,9 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".PlayerSet.PlayerActivity">
+        </activity>
+
         <!-- Auth Activity (Login) -->
         <activity
             android:name=".LoginRegister.AuthActivity"

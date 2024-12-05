@@ -12,11 +12,11 @@
         android:label="Home"
         tools:layout="@layout/fragment_home" />
     <!-- Player Fragment -->
-    <fragment
-        android:id="@+id/navigation_play"
-        android:name="com.tdtu.my_music_player.PlayerSet.PlayFragment"
-        android:label="Player"
-        tools:layout="@layout/fragment_play" />
+    <activity
+        android:id="@+id/player_activity"
+        android:name="com.tdtu.my_music_player.PlayerSet.PlayerActivity"
+        tools:layout="@layout/activity_player"
+        />
 
     <!-- Library Fragment -->
     <fragment

@@ -167,16 +167,6 @@ public class MediaPlayerManager {
         return currentAlbumCoverResource;
     }
 
-
-
-    public void registerPlaybackStateListener(PlaybackStateListener listener) {
-        listeners.add(listener);
-    }
-
-    public void unregisterPlaybackStateListener(PlaybackStateListener listener) {
-        listeners.remove(listener);
-    }
-
     private void notifyPlaybackStateChange() {
         for (PlaybackStateListener listener : listeners) {
             listener.onPlaybackStateChanged();

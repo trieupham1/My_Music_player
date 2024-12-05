@@ -82,12 +82,20 @@ public class MainActivity extends AppCompatActivity {
 
         btnNext.setOnClickListener(v -> {
             playNextSong();
+            updateMiniPlayerUI();
             notifyPlayFragment();
         });
 
         btnPrevious.setOnClickListener(v -> {
             playPreviousSong();
+            updateMiniPlayerUI();
             notifyPlayFragment();
+        });
+
+        // Open full player activity when the mini-player is clicked
+        bottomPlayerPanel.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, PlayerActivity.class);
+            startActivity(intent);  // Launch PlayerActivity
         });
     }
 
@@ -143,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
         if (navHostFragment != null) {
             NavController navController = navHostFragment.getNavController();
             AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                    R.id.navigation_home, R.id.navigation_play, R.id.navigation_search,
+                    R.id.navigation_home, R.id.navigation_search,
                     R.id.navigation_profile, R.id.navigation_playlist).build();
             NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
             NavigationUI.setupWithNavController(navView, navController);
@@ -187,10 +195,8 @@ public class MainActivity extends AppCompatActivity {
             bottomPlayerPanel.setVisibility(View.VISIBLE);
         } else {
             btnPlayPause.setImageResource(R.drawable.ic_play);
-
         }
     }
-
 
     private void notifyPlayFragment() {
         if (onPlayerStatusChangedListener != null) {
@@ -201,6 +207,7 @@ public class MainActivity extends AppCompatActivity {
     public void setOnPlayerStatusChangedListener(OnPlayerStatusChangedListener listener) {
         this.onPlayerStatusChangedListener = listener;
     }
+
     @Override
     public void onBackPressed() {
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
@@ -215,30 +222,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // Always show the mini-player on navigation changes
-    private void handleNavigationVisibility() {
-        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.nav_host_fragment);
-        if (navHostFragment != null) {
-            navHostFragment.getNavController().addOnDestinationChangedListener((controller, destination, arguments) -> {
-                if (destination.getId() == R.id.navigation_play) {
-                    bottomPlayerPanel.setVisibility(View.GONE); // Hide mini-player
-                } else {
-                    bottomPlayerPanel.setVisibility(View.VISIBLE); // Show mini-player
-                }
-            });
-        }
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
         resetFragmentInteractivity();
     }
 
-    /**
-     * Ensures all fragments are interactive when returning to the app.
-     */
     private void resetFragmentInteractivity() {
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.nav_host_fragment);
@@ -265,4 +254,3 @@ public class MainActivity extends AppCompatActivity {
         void onPlayerStatusChanged();
     }
 }
-
