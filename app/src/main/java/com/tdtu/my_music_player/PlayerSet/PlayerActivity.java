@@ -292,9 +292,22 @@ public class PlayerActivity extends AppCompatActivity {
     }
 
     private void addToPlaylist() {
-        mediaPlayerManager.addCurrentSongToPlaylist(this);
-        Toast.makeText(this, "Added to playlist", Toast.LENGTH_SHORT).show();
+        String playlistName = "Favorites"; // Replace with user-selected playlist if needed
+        if (playlistName == null || playlistName.isEmpty()) {
+            Toast.makeText(this, "Invalid playlist name.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        try {
+            mediaPlayerManager.addCurrentSongToPlaylist(this, playlistName);
+            Toast.makeText(this, "Added to playlist: " + playlistName, Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            Toast.makeText(this, "Failed to add song to playlist: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            e.printStackTrace(); // Log the stack trace for debugging
+        }
     }
+
+
 
     private void updateUI() {
         playbackBar.setMax(mediaPlayerManager.getTotalDuration());

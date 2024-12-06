@@ -13,7 +13,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.tdtu.my_music_player.MediaManager.MediaPlayerManager;
 import com.tdtu.my_music_player.PlayerSet.MainActivity;
 import com.tdtu.my_music_player.R;
 import com.tdtu.my_music_player.SearchSong.Song;
@@ -22,91 +21,109 @@ import java.util.List;
 
 public class PlaylistFragment extends Fragment {
 
+    private RecyclerView playlistListRecyclerView;
     private RecyclerView playlistRecyclerView;
-    private List<Song> playlist;
+    private PlaylistManager playlistManager;
+    private PlaylistNameAdapter playlistNameAdapter;
     private PlaylistAdapter playlistAdapter;
-    private MediaPlayerManager mediaPlayerManager;
-    private Button removeButton;
-    private int selectedPosition = -1;  // Holds the selected song position for removal
+    private Button addPlaylistButton;
+    private Button deletePlaylistButton;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_playlist, container, false);
 
+        playlistListRecyclerView = view.findViewById(R.id.playlistListRecyclerView);
         playlistRecyclerView = view.findViewById(R.id.playlistRecyclerView);
-        removeButton = view.findViewById(R.id.remove_button);
+        addPlaylistButton = view.findViewById(R.id.add_playlist_button);
+        deletePlaylistButton = view.findViewById(R.id.delete_playlist_button);
 
-        // Initialize the playlist using PlaylistManager
-        PlaylistManager playlistManager = PlaylistManager.getInstance(requireContext());
-        playlist = playlistManager.getPlaylist();
+        playlistManager = PlaylistManager.getInstance(requireContext());
 
-        // Set up the RecyclerView and adapter
-        playlistAdapter = new PlaylistAdapter(getContext(), playlist, (song, position) -> {
-            MainActivity mainActivity = (MainActivity) getActivity();
-            if (mainActivity != null) {
-                mainActivity.playSelectedSong(
-                        song.getTitle(),
-                        song.getArtist(),
-                        song.getResource(),
-                        song.getAlbumCoverResource()
-                );
-            }
-            selectedPosition = position;
-        });
-        playlistRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        playlistRecyclerView.setAdapter(playlistAdapter);
+        // Initialize RecyclerView for Playlist Names
+        setupPlaylistListRecyclerView();
 
-        // Initialize MediaPlayerManager
-        mediaPlayerManager = MediaPlayerManager.getInstance();
+        // Add Playlist Button
+        addPlaylistButton.setOnClickListener(v -> showCreatePlaylistDialog());
 
-        // Set up Remove Button to remove the selected song
-        removeButton.setOnClickListener(v -> removeSelectedSong());
+        // Delete Playlist Button
+        deletePlaylistButton.setOnClickListener(v -> showDeletePlaylistDialog());
 
         return view;
     }
 
-    // Function to add the current song to the playlist
-    public void addCurrentSongToPlaylist() {
-        if (mediaPlayerManager == null) {
-            Toast.makeText(getContext(), "No song is currently playing", Toast.LENGTH_SHORT).show();
-            return;
-        }
+    private void setupPlaylistListRecyclerView() {
+        playlistNameAdapter = new PlaylistNameAdapter(getContext(), playlistManager.getAllPlaylists(), playlistName -> {
+            // Load and display the songs in the selected playlist
+            displaySongsInPlaylist(playlistName);
+        });
 
-        String currentSongTitle = mediaPlayerManager.getCurrentSongTitle();
-        String currentArtistName = mediaPlayerManager.getCurrentArtistName();
-        int currentSongResource = mediaPlayerManager.getCurrentSongResource();
-        int currentAlbumCoverResource = mediaPlayerManager.getCurrentAlbumCoverResource();
+        playlistListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        playlistListRecyclerView.setAdapter(playlistNameAdapter);
+    }
 
-        PlaylistManager playlistManager = PlaylistManager.getInstance(requireContext());
-        if (playlistManager.isSongInPlaylist(currentSongTitle, currentArtistName)) {
-            Toast.makeText(getContext(), "Song is already in the playlist", Toast.LENGTH_SHORT).show();
+    private void displaySongsInPlaylist(String playlistName) {
+        List<Song> songs = playlistManager.getPlaylist(playlistName);
+        if (songs != null && !songs.isEmpty()) {
+            playlistRecyclerView.setVisibility(View.VISIBLE);
+            playlistAdapter = new PlaylistAdapter(getContext(), songs, (song, position) -> {
+                MainActivity mainActivity = (MainActivity) getActivity();
+                if (mainActivity != null) {
+                    mainActivity.playSelectedSong(
+                            song.getTitle(),
+                            song.getArtist(),
+                            song.getResource(),
+                            song.getAlbumCoverResource()
+                    );
+                }
+            });
+
+            playlistRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+            playlistRecyclerView.setAdapter(playlistAdapter);
         } else {
-            playlistManager.addSongToPlaylist(
-                    currentSongTitle,
-                    currentArtistName,
-                    currentSongResource,
-                    currentAlbumCoverResource
-            );
-            playlistAdapter.notifyDataSetChanged(); // Update the playlist display
-            Toast.makeText(getContext(), "Song added to playlist", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "No songs in this playlist", Toast.LENGTH_SHORT).show();
         }
     }
 
-    // Function to remove the selected song from the playlist
-    private void removeSelectedSong() {
-        if (selectedPosition != -1) {
-            Song songToRemove = playlist.get(selectedPosition);
-            PlaylistManager playlistManager = PlaylistManager.getInstance(requireContext());
-            if (playlistManager.removeSongFromPlaylist(songToRemove)) {
-                Toast.makeText(getContext(), "Song removed from playlist", Toast.LENGTH_SHORT).show();
-                playlistAdapter.notifyDataSetChanged(); // Update the playlist display
-                selectedPosition = -1;  // Reset the selected position
+    private void showCreatePlaylistDialog() {
+        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(requireContext());
+        builder.setTitle("Create New Playlist");
+        final android.widget.EditText input = new android.widget.EditText(requireContext());
+        input.setHint("Enter playlist name");
+        builder.setView(input);
+
+        builder.setPositiveButton("Create", (dialog, which) -> {
+            String playlistName = input.getText().toString().trim();
+            if (!playlistName.isEmpty()) {
+                playlistManager.createPlaylist(playlistName);
+                playlistNameAdapter.updatePlaylists(playlistManager.getAllPlaylists());
+                Toast.makeText(getContext(), "Playlist created", Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(getContext(), "Error removing song from playlist", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Playlist name cannot be empty", Toast.LENGTH_SHORT).show();
             }
-        } else {
-            Toast.makeText(getContext(), "Please select a song to remove", Toast.LENGTH_SHORT).show();
-        }
+        });
+        builder.setNegativeButton("Cancel", null);
+        builder.show();
+    }
+
+    private void showDeletePlaylistDialog() {
+        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(requireContext());
+        builder.setTitle("Delete Playlist");
+
+        // Show list of playlists to select for deletion
+        final String[] playlistNames = playlistManager.getAllPlaylists().toArray(new String[0]);
+        builder.setItems(playlistNames, (dialog, which) -> {
+            String playlistToDelete = playlistNames[which];
+            if (playlistManager.removePlaylist(playlistToDelete)) {
+                playlistNameAdapter.updatePlaylists(playlistManager.getAllPlaylists());
+                Toast.makeText(getContext(), "Playlist deleted", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getContext(), "Failed to delete playlist", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        builder.setNegativeButton("Cancel", null);
+        builder.show();
     }
 }

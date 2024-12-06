@@ -1,21 +1,15 @@
 package com.tdtu.my_music_player.MediaManager;
 
-import android.app.Notification;
-import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Build;
 
 import androidx.annotation.RequiresApi;
-import androidx.core.app.NotificationCompat;
-import androidx.media.session.MediaButtonReceiver;
+
 import android.support.v4.media.session.MediaSessionCompat;
 import android.widget.Toast;
 
-import com.tdtu.my_music_player.PlayerSet.MainActivity;
 import com.tdtu.my_music_player.Playlist.PlaylistManager;
 import com.tdtu.my_music_player.R;
 import com.tdtu.my_music_player.SearchSong.Song;
@@ -182,20 +176,28 @@ public class MediaPlayerManager {
             notifyPlaybackStateChange(); // Notify listeners about the playback state change
         }
     }
-    public void addCurrentSongToPlaylist(Context context) {
+    public void addCurrentSongToPlaylist(Context context, String playlistName) {
         PlaylistManager playlistManager = PlaylistManager.getInstance(context);
-        if (playlistManager.isSongInPlaylist(currentSongTitle, currentArtistName)) {
-            Toast.makeText(context, "Song is already in the playlist", Toast.LENGTH_SHORT).show();
+
+        if (playlistName == null || playlistName.isEmpty()) {
+            Toast.makeText(context, "Invalid playlist name.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (playlistManager.isSongInPlaylist(playlistName, currentSongTitle, currentArtistName)) {
+            Toast.makeText(context, "Song is already in the playlist.", Toast.LENGTH_SHORT).show();
         } else {
             playlistManager.addSongToPlaylist(
+                    playlistName,
                     currentSongTitle,
                     currentArtistName,
                     currentSongResource,
                     currentAlbumCoverResource
             );
-            Toast.makeText(context, "Song added to playlist", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Song added to playlist: " + playlistName, Toast.LENGTH_SHORT).show();
         }
     }
+
     public void seekTo(int position) {
         if (mediaPlayer != null) {
             mediaPlayer.seekTo(position); // Move playback to the specified position
