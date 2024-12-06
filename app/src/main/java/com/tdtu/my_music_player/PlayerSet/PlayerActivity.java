@@ -291,6 +291,11 @@ public class PlayerActivity extends AppCompatActivity {
         });
     }
 
+    private void addToPlaylist() {
+        mediaPlayerManager.addCurrentSongToPlaylist(this);
+        Toast.makeText(this, "Added to playlist", Toast.LENGTH_SHORT).show();
+    }
+
     private void updateUI() {
         playbackBar.setMax(mediaPlayerManager.getTotalDuration());
         playbackBar.setProgress(mediaPlayerManager.getCurrentPosition());
