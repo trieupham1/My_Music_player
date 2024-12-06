@@ -42,6 +42,9 @@ public class PlayerActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
+        }
         setContentView(R.layout.activity_player);
 
         // Initialize Views
@@ -166,11 +169,6 @@ public class PlayerActivity extends AppCompatActivity {
         mediaPlayerManager.playPreviousSong(this);
         updateUI();
         updateBackgroundColorFromAlbumCover();
-    }
-
-    private void addToPlaylist() {
-        mediaPlayerManager.addCurrentSongToPlaylist(this);
-        Toast.makeText(this, "Added to playlist", Toast.LENGTH_SHORT).show();
     }
 
     private void setupPlaybackBar() {
