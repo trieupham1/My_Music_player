@@ -11,28 +11,25 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Looper;
-import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ScrollView;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.palette.graphics.Palette;
 
 import com.tdtu.my_music_player.Playlist.PlaylistManager;
 import com.tdtu.my_music_player.SearchSong.Song;
-import com.tdtu.my_music_player.Time.TimerDialogFragment;
 import com.tdtu.my_music_player.MediaManager.MediaPlayerManager;
 import com.tdtu.my_music_player.R;
 
 import java.util.List;
 
 public class PlayerActivity extends AppCompatActivity {
-    private NotificationManager notificationManager;
     private TextView tvSongTitle, tvArtistName, tvCountdownTimer, tvCurrentTime, tvTotalDuration, playbackSpeedText;
     private ImageButton btnPlayPause, btnNext, btnPrevious;
     private Button btnAddToPlaylist, btnStartTimer;
@@ -40,6 +37,7 @@ public class PlayerActivity extends AppCompatActivity {
     private ImageView imgAlbumCover;
     private ScrollView scrollView;
     private MediaPlayerManager mediaPlayerManager;
+    private PlaylistManager playlistManager;
     private AudioManager audioManager;
     private CountDownTimer countDownTimer;
     private long timeLeftInMillis = 0;
@@ -71,8 +69,9 @@ public class PlayerActivity extends AppCompatActivity {
         imgAlbumCover = findViewById(R.id.img_album_cover);
         scrollView = findViewById(R.id.scrollView);
 
-        // Initialize MediaPlayerManager
+        // Initialize Managers
         mediaPlayerManager = MediaPlayerManager.getInstance();
+        playlistManager = PlaylistManager.getInstance(this);
         audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 
         // Set button click listeners
@@ -80,14 +79,32 @@ public class PlayerActivity extends AppCompatActivity {
         btnNext.setOnClickListener(v -> playNextSong());
         btnPrevious.setOnClickListener(v -> playPreviousSong());
         btnAddToPlaylist.setOnClickListener(v -> addToPlaylist());
-        setupSleepTimer();
 
+        setupSleepTimer();
         setupPlaybackBar();
         setupVolumeControl();
         setupSpeedControl();
 
         updateUI();
         updateBackgroundColorFromAlbumCover();
+    }
+
+    private void updateUI() {
+        // Update playback bar with the song's total duration and current position
+        playbackBar.setMax(mediaPlayerManager.getTotalDuration());
+        playbackBar.setProgress(mediaPlayerManager.getCurrentPosition());
+
+        // Update the song title, artist name, and album cover
+        tvSongTitle.setText(mediaPlayerManager.getCurrentSongTitle());
+        tvArtistName.setText(mediaPlayerManager.getCurrentArtistName());
+        imgAlbumCover.setImageResource(mediaPlayerManager.getCurrentAlbumCoverResource());
+
+        // Update play/pause button state
+        btnPlayPause.setImageResource(mediaPlayerManager.isPlaying() ? R.drawable.ic_pause : R.drawable.ic_play);
+
+        // Update total duration and current time of the song
+        tvTotalDuration.setText(formatTime(mediaPlayerManager.getTotalDuration()));
+        tvCurrentTime.setText(formatTime(mediaPlayerManager.getCurrentPosition()));
     }
 
     private void togglePlayPause() {
@@ -103,71 +120,42 @@ public class PlayerActivity extends AppCompatActivity {
         }
     }
 
-    private void updateBackgroundColorFromAlbumCover() {
-        // Get the bitmap from the ImageView containing the album cover
-        Bitmap albumBitmap = ((BitmapDrawable) imgAlbumCover.getDrawable()).getBitmap();
+    private void addToPlaylist() {
+        List<String> playlistNames = playlistManager.getAllPlaylists();
 
-        // Extract the dominant color using Palette
-        Palette.from(albumBitmap).generate(new Palette.PaletteAsyncListener() {
-            @Override
-            public void onGenerated(Palette palette) {
-                // Get the dominant color
-                int dominantColor = palette.getDominantColor(Color.BLACK);
+        if (playlistNames.isEmpty()) {
+            Toast.makeText(this, "No playlists available. Create one first.", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-                // Check if the color is too bright
-                if (isColorBright(dominantColor)) {
-                    dominantColor = darkenColor(dominantColor); // Darken the color
-                }
+        CharSequence[] playlistsArray = playlistNames.toArray(new CharSequence[0]);
 
-                // Set the background color of the ScrollView
-                scrollView.setBackgroundColor(dominantColor);
+        Song currentSong = new Song(
+                mediaPlayerManager.getCurrentSongTitle(),
+                mediaPlayerManager.getCurrentArtistName(),
+                mediaPlayerManager.getCurrentSongResource(),
+                mediaPlayerManager.getCurrentAlbumCoverResource()
+        );
 
-                // Adjust text and icon colors for contrast
-                adjustTextAndIconColors(dominantColor);
-            }
-        });
-    }
+        new AlertDialog.Builder(this)
+                .setTitle("Select a Playlist")
+                .setItems(playlistsArray, (dialog, which) -> {
+                    String selectedPlaylist = playlistNames.get(which);
 
-    // Utility to check if a color is bright
-    private boolean isColorBright(int color) {
-        int red = Color.red(color);
-        int green = Color.green(color);
-        int blue = Color.blue(color);
-        double brightness = (0.299 * red + 0.587 * green + 0.114 * blue);
-        return brightness > 200;
-    }
-
-    // Utility to darken a color
-    private int darkenColor(int color) {
-        float factor = 0.7f; // Adjust by 30% darker
-        int red = (int) (Color.red(color) * factor);
-        int green = (int) (Color.green(color) * factor);
-        int blue = (int) (Color.blue(color) * factor);
-        return Color.rgb(red, green, blue);
-    }
-
-    // Adjust text and icon colors based on the background color
-    private void adjustTextAndIconColors(int backgroundColor) {
-        // If background is dark, use light text/icons
-        boolean isDarkBackground = !isColorBright(backgroundColor);
-        int textColor = isDarkBackground ? Color.WHITE : Color.BLACK;
-
-        tvSongTitle.setTextColor(textColor);
-        tvArtistName.setTextColor(textColor);
-        tvCountdownTimer.setTextColor(textColor);
-        tvCurrentTime.setTextColor(textColor);
-        tvTotalDuration.setTextColor(textColor);
-        playbackSpeedText.setTextColor(textColor);
-
-        btnPlayPause.setColorFilter(textColor);
-        btnNext.setColorFilter(textColor);
-        btnPrevious.setColorFilter(textColor);
+                    if (!playlistManager.isSongInPlaylist(selectedPlaylist, currentSong.getTitle(), currentSong.getArtist())) {
+                        playlistManager.addSongToPlaylist(selectedPlaylist, currentSong);
+                        Toast.makeText(this, "Added to playlist: " + selectedPlaylist, Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(this, "Song already exists in playlist.", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
     }
 
     private void playNextSong() {
         mediaPlayerManager.playNextSong(this);
         updateUI();
-
         updateBackgroundColorFromAlbumCover();
     }
 
@@ -211,15 +199,19 @@ public class PlayerActivity extends AppCompatActivity {
 
     private void setupSleepTimer() {
         btnStartTimer.setOnClickListener(v -> {
-            TimerDialogFragment timerDialog = new TimerDialogFragment(minutes -> {
-                if (minutes == 0) {
-                    cancelSleepTimer();
-                } else {
-                    timeLeftInMillis = minutes * 60 * 1000;
-                    startSleepTimer();
-                }
-            });
-            timerDialog.show(getSupportFragmentManager(), "TimerDialog");
+            String[] timerOptions = {"Off", "5 minutes", "10 minutes", "15 minutes", "20 minutes", "30 minutes", "1 hour"};
+            new AlertDialog.Builder(this)
+                    .setTitle("Set Sleep Timer")
+                    .setItems(timerOptions, (dialog, which) -> {
+                        if (which == 0) {
+                            cancelSleepTimer();
+                        } else {
+                            timeLeftInMillis = which * 5 * 60 * 1000;
+                            startSleepTimer();
+                        }
+                    })
+                    .setNegativeButton("Cancel", null)
+                    .show();
         });
     }
 
@@ -267,7 +259,9 @@ public class PlayerActivity extends AppCompatActivity {
         volumeBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, progress, 0);
+                if (fromUser) {
+                    audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, progress, 0);
+                }
             }
 
             @Override
@@ -279,14 +273,14 @@ public class PlayerActivity extends AppCompatActivity {
     }
 
     private void setupSpeedControl() {
-        speedBar.setMax(5); // Range from 0.5x to 2x playback speed
-        speedBar.setProgress(2); // Default speed: 1x
+        speedBar.setMax(100);
+        speedBar.setProgress(100);
         speedBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                float speed = 0.5f + progress * 0.25f; // Map progress to speed range
+                float speed = 0.5f + (progress / 200f);
+                playbackSpeedText.setText("Speed: " + speed + "x");
                 mediaPlayerManager.setPlaybackSpeed(speed);
-                playbackSpeedText.setText(String.format("Speed: %.1fx", speed));
             }
 
             @Override
@@ -297,60 +291,21 @@ public class PlayerActivity extends AppCompatActivity {
         });
     }
 
-    private void addToPlaylist() {
-        // Fetch the list of current playlists from the PlaylistManager
-        PlaylistManager playlistManager = PlaylistManager.getInstance(this);
-        List<String> playlistNames = playlistManager.getAllPlaylists();
-
-        if (playlistNames.isEmpty()) {
-            // Show a message if there are no playlists available
-            Toast.makeText(this, "No playlists available. Create one first.", Toast.LENGTH_SHORT).show();
-            return;
+    private void updateBackgroundColorFromAlbumCover() {
+        Bitmap albumCoverBitmap = ((BitmapDrawable) imgAlbumCover.getDrawable()).getBitmap();
+        if (albumCoverBitmap != null) {
+            Palette.from(albumCoverBitmap).generate(palette -> {
+                if (palette != null) {
+                    int dominantColor = palette.getDominantColor(Color.BLACK);
+                    scrollView.setBackgroundColor(dominantColor);
+                }
+            });
         }
-
-        // Convert the playlist names to a CharSequence array for the dialog
-        CharSequence[] playlistsArray = playlistNames.toArray(new CharSequence[0]);
-
-        // Create a dummy song or use the currently playing song
-        Song currentSong = new Song(
-                mediaPlayerManager.getCurrentSongTitle(),
-                mediaPlayerManager.getCurrentArtistName(),
-                mediaPlayerManager.getCurrentSongResource(),
-                mediaPlayerManager.getCurrentAlbumCoverResource()
-        );
-
-        // Show the dialog to choose a playlist
-        new AlertDialog.Builder(this)
-                .setTitle("Select a Playlist")
-                .setItems(playlistsArray, (dialog, which) -> {
-                    String selectedPlaylist = playlistNames.get(which);
-
-                    // Add the selected song to the chosen playlist
-                    try {
-                        playlistManager.addSongToPlaylist(selectedPlaylist, currentSong);
-                        Toast.makeText(this, "Added to playlist: " + selectedPlaylist, Toast.LENGTH_SHORT).show();
-                    } catch (Exception e) {
-                        Toast.makeText(this, "Failed to add song: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .setNegativeButton("Cancel", null)
-                .show();
-    }
-
-    private void updateUI() {
-        playbackBar.setMax(mediaPlayerManager.getTotalDuration());
-        playbackBar.setProgress(mediaPlayerManager.getCurrentPosition());
-        tvSongTitle.setText(mediaPlayerManager.getCurrentSongTitle());
-        tvArtistName.setText(mediaPlayerManager.getCurrentArtistName());
-        imgAlbumCover.setImageResource(mediaPlayerManager.getCurrentAlbumCoverResource());
-        btnPlayPause.setImageResource(mediaPlayerManager.isPlaying() ? R.drawable.ic_pause : R.drawable.ic_play);
-        tvTotalDuration.setText(formatTime(mediaPlayerManager.getTotalDuration()));
-        tvCurrentTime.setText(formatTime(mediaPlayerManager.getCurrentPosition()));
     }
 
     private String formatTime(int timeInMillis) {
-        int minutes = timeInMillis / 60000;
-        int seconds = (timeInMillis % 60000) / 1000;
+        int minutes = timeInMillis / 1000 / 60;
+        int seconds = timeInMillis / 1000 % 60;
         return String.format("%02d:%02d", minutes, seconds);
     }
 }
