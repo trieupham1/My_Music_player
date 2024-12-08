@@ -29,7 +29,7 @@
                     android:layout_height="wrap_content"
                     android:text="Add Playlist"
                     android:layout_marginEnd="8dp"
-                    android:background="?attr/selectableItemBackground"
+                    android:background="@drawable/rounded_button_background"
                     android:textColor="@android:color/white" />
 
                 <Button
@@ -37,7 +37,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Delete Playlist"
-                    android:background="?attr/selectableItemBackground"
+                    android:background="@drawable/rounded_button_background"
                     android:textColor="@android:color/white" />
             </LinearLayout>
 

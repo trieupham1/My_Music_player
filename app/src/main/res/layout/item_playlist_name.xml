@@ -12,8 +12,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="@android:color/white"
-        android:textSize="18sp"
+        android:textSize="25sp"
         android:ellipsize="end"
         android:singleLine="true"
-        android:padding="8dp" />
+        android:padding="8dp"
+        />
 </LinearLayout>
