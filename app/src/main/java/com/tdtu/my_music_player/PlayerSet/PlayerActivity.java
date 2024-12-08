@@ -1,5 +1,6 @@
 package com.tdtu.my_music_player.PlayerSet;
 
+import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -21,9 +22,14 @@ import android.widget.Toast;
 import android.widget.ScrollView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.palette.graphics.Palette;
+
+import com.tdtu.my_music_player.Playlist.PlaylistManager;
+import com.tdtu.my_music_player.SearchSong.Song;
 import com.tdtu.my_music_player.Time.TimerDialogFragment;
 import com.tdtu.my_music_player.MediaManager.MediaPlayerManager;
 import com.tdtu.my_music_player.R;
+
+import java.util.List;
 
 public class PlayerActivity extends AppCompatActivity {
     private NotificationManager notificationManager;
@@ -292,22 +298,44 @@ public class PlayerActivity extends AppCompatActivity {
     }
 
     private void addToPlaylist() {
-        String playlistName = "Favorites"; // Replace with user-selected playlist if needed
-        if (playlistName == null || playlistName.isEmpty()) {
-            Toast.makeText(this, "Invalid playlist name.", Toast.LENGTH_SHORT).show();
+        // Fetch the list of current playlists from the PlaylistManager
+        PlaylistManager playlistManager = PlaylistManager.getInstance(this);
+        List<String> playlistNames = playlistManager.getAllPlaylists();
+
+        if (playlistNames.isEmpty()) {
+            // Show a message if there are no playlists available
+            Toast.makeText(this, "No playlists available. Create one first.", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        try {
-            mediaPlayerManager.addCurrentSongToPlaylist(this, playlistName);
-            Toast.makeText(this, "Added to playlist: " + playlistName, Toast.LENGTH_SHORT).show();
-        } catch (Exception e) {
-            Toast.makeText(this, "Failed to add song to playlist: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-            e.printStackTrace(); // Log the stack trace for debugging
-        }
+        // Convert the playlist names to a CharSequence array for the dialog
+        CharSequence[] playlistsArray = playlistNames.toArray(new CharSequence[0]);
+
+        // Create a dummy song or use the currently playing song
+        Song currentSong = new Song(
+                mediaPlayerManager.getCurrentSongTitle(),
+                mediaPlayerManager.getCurrentArtistName(),
+                mediaPlayerManager.getCurrentSongResource(),
+                mediaPlayerManager.getCurrentAlbumCoverResource()
+        );
+
+        // Show the dialog to choose a playlist
+        new AlertDialog.Builder(this)
+                .setTitle("Select a Playlist")
+                .setItems(playlistsArray, (dialog, which) -> {
+                    String selectedPlaylist = playlistNames.get(which);
+
+                    // Add the selected song to the chosen playlist
+                    try {
+                        playlistManager.addSongToPlaylist(selectedPlaylist, currentSong);
+                        Toast.makeText(this, "Added to playlist: " + selectedPlaylist, Toast.LENGTH_SHORT).show();
+                    } catch (Exception e) {
+                        Toast.makeText(this, "Failed to add song: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
     }
-
-
 
     private void updateUI() {
         playbackBar.setMax(mediaPlayerManager.getTotalDuration());

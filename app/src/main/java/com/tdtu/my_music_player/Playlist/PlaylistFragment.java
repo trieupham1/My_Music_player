@@ -1,5 +1,6 @@
 package com.tdtu.my_music_player.Playlist;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -89,11 +90,16 @@ public class PlaylistFragment extends Fragment {
     private void showCreatePlaylistDialog() {
         androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(requireContext());
         builder.setTitle("Create New Playlist");
+
+        // Create an EditText with black text color
         final android.widget.EditText input = new android.widget.EditText(requireContext());
         input.setHint("Enter playlist name");
+        input.setTextColor(Color.BLACK); // Set text color to black
+        input.setHintTextColor(Color.GRAY); // Optional: Set hint color to gray
         builder.setView(input);
 
-        builder.setPositiveButton("Create", (dialog, which) -> {
+        // Set buttons with black text color
+        builder.setPositiveButton("CREATE", (dialog, which) -> {
             String playlistName = input.getText().toString().trim();
             if (!playlistName.isEmpty()) {
                 playlistManager.createPlaylist(playlistName);
@@ -103,9 +109,19 @@ public class PlaylistFragment extends Fragment {
                 Toast.makeText(getContext(), "Playlist name cannot be empty", Toast.LENGTH_SHORT).show();
             }
         });
-        builder.setNegativeButton("Cancel", null);
-        builder.show();
+
+        builder.setNegativeButton("CANCEL", (dialog, which) -> dialog.dismiss());
+
+        // Create and show the dialog
+        androidx.appcompat.app.AlertDialog dialog = builder.create();
+        dialog.show();
+
+        // Customize button text colors
+        dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE).setTextColor(Color.BLACK);
+        dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.BLACK);
     }
+
+
 
     private void showDeletePlaylistDialog() {
         androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(requireContext());
