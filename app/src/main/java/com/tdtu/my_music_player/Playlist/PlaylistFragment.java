@@ -56,7 +56,7 @@ public class PlaylistFragment extends Fragment {
 
     private void setupPlaylistListRecyclerView() {
         playlistNameAdapter = new PlaylistNameAdapter(getContext(), playlistManager.getAllPlaylists(), playlistName -> {
-            // Load and display the songs in the selected playlist
+            // Load the songs in the selected playlist and display them
             displaySongsInPlaylist(playlistName);
         });
 
@@ -65,7 +65,7 @@ public class PlaylistFragment extends Fragment {
     }
 
     private void displaySongsInPlaylist(String playlistName) {
-        List<Song> songs = playlistManager.getPlaylist(playlistName);
+        List<Song> songs = playlistManager.getPlaylist(playlistName); // Get songs for the selected playlist
         if (songs != null && !songs.isEmpty()) {
             playlistRecyclerView.setVisibility(View.VISIBLE);
             playlistAdapter = new PlaylistAdapter(getContext(), songs, (song, position) -> {
@@ -120,8 +120,6 @@ public class PlaylistFragment extends Fragment {
         dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE).setTextColor(Color.BLACK);
         dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.BLACK);
     }
-
-
 
     private void showDeletePlaylistDialog() {
         androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(requireContext());

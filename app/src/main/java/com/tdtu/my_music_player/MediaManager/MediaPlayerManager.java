@@ -176,27 +176,7 @@ public class MediaPlayerManager {
             notifyPlaybackStateChange(); // Notify listeners about the playback state change
         }
     }
-    public void addCurrentSongToPlaylist(Context context, String playlistName) {
-        PlaylistManager playlistManager = PlaylistManager.getInstance(context);
 
-        if (playlistName == null || playlistName.isEmpty()) {
-            Toast.makeText(context, "Invalid playlist name.", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        if (playlistManager.isSongInPlaylist(playlistName, currentSongTitle, currentArtistName)) {
-            Toast.makeText(context, "Song is already in the playlist.", Toast.LENGTH_SHORT).show();
-        } else {
-            playlistManager.addSongToPlaylist(
-                    playlistName,
-                    currentSongTitle,
-                    currentArtistName,
-                    currentSongResource,
-                    currentAlbumCoverResource
-            );
-            Toast.makeText(context, "Song added to playlist: " + playlistName, Toast.LENGTH_SHORT).show();
-        }
-    }
 
     public void seekTo(int position) {
         if (mediaPlayer != null) {

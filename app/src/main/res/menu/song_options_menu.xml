@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <!-- Add Song option -->
+
+    <!-- Delete Playlist option -->
+    <item
+        android:id="@+id/menu_delete"
+        android:title="Delete Playlist"
+        android:icon="@drawable/ic_delete"
+        app:showAsAction="ifRoom" />
+
+    <!-- Add any other menu options you need here -->
+</menu>

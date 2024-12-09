@@ -18,10 +18,10 @@ import java.util.List;
 public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.PlaylistViewHolder> {
 
     private final Context context;
-    private final List<Song> playlist;
+    private final List<Song> playlist; // Corrected to List<Song>
     private final OnItemClickListener onItemClickListener;
 
-    // Interface to handle item clicks
+    // Interface for item click listener
     public interface OnItemClickListener {
         void onItemClick(Song song, int position);
     }
@@ -41,7 +41,6 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.Playli
 
     @Override
     public void onBindViewHolder(@NonNull PlaylistViewHolder holder, int position) {
-        // Get the song at the current position
         Song song = playlist.get(position);
 
         // Bind song data to the views
@@ -52,8 +51,7 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.Playli
         if (song.getAlbumCoverResource() != 0) {
             holder.albumCoverImageView.setImageResource(song.getAlbumCoverResource());
         } else {
-            // Use a placeholder if no album cover resource is provided
-            holder.albumCoverImageView.setImageResource(R.drawable.mice);
+            holder.albumCoverImageView.setImageResource(R.drawable.mice); // Placeholder
         }
 
         // Set up the item click listener

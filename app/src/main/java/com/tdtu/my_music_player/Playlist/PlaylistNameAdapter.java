@@ -53,7 +53,7 @@ public class PlaylistNameAdapter extends RecyclerView.Adapter<PlaylistNameAdapte
     // Method to update the list of playlists
     public void updatePlaylists(List<String> newPlaylists) {
         this.playlistNames = newPlaylists;
-        notifyDataSetChanged(); // Notify adapter to refresh the RecyclerView
+        notifyDataSetChanged(); // Notify the adapter to refresh the RecyclerView
     }
 
     public static class PlaylistViewHolder extends RecyclerView.ViewHolder {
