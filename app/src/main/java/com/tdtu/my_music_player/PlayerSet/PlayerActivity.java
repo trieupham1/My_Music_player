@@ -215,6 +215,67 @@ public class PlayerActivity extends AppCompatActivity {
         });
     }
 
+    private void updateBackgroundColorFromAlbumCover() {
+        // Get the bitmap from the ImageView containing the album cover
+        Bitmap albumBitmap = ((BitmapDrawable) imgAlbumCover.getDrawable()).getBitmap();
+
+        // Extract the dominant color using Palette
+        Palette.from(albumBitmap).generate(new Palette.PaletteAsyncListener() {
+            @Override
+            public void onGenerated(Palette palette) {
+                // Get the dominant color
+                int dominantColor = palette.getDominantColor(Color.BLACK);
+
+                // Check if the color is too bright
+                if (isColorBright(dominantColor)) {
+                    dominantColor = darkenColor(dominantColor); // Darken the color
+                }
+
+                // Set the background color of the ScrollView
+                scrollView.setBackgroundColor(dominantColor);
+
+                // Adjust text and icon colors for contrast
+                adjustTextAndIconColors(dominantColor);
+            }
+        });
+    }
+
+    // Utility to check if a color is bright
+    private boolean isColorBright(int color) {
+        int red = Color.red(color);
+        int green = Color.green(color);
+        int blue = Color.blue(color);
+        double brightness = (0.299 * red + 0.587 * green + 0.114 * blue);
+        return brightness > 200;
+    }
+
+    // Utility to darken a color
+    private int darkenColor(int color) {
+        float factor = 0.7f; // Adjust by 30% darker
+        int red = (int) (Color.red(color) * factor);
+        int green = (int) (Color.green(color) * factor);
+        int blue = (int) (Color.blue(color) * factor);
+        return Color.rgb(red, green, blue);
+    }
+
+    // Adjust text and icon colors based on the background color
+    private void adjustTextAndIconColors(int backgroundColor) {
+        // If background is dark, use light text/icons
+        boolean isDarkBackground = !isColorBright(backgroundColor);
+        int textColor = isDarkBackground ? Color.WHITE : Color.BLACK;
+
+        tvSongTitle.setTextColor(textColor);
+        tvArtistName.setTextColor(textColor);
+        tvCountdownTimer.setTextColor(textColor);
+        tvCurrentTime.setTextColor(textColor);
+        tvTotalDuration.setTextColor(textColor);
+        playbackSpeedText.setTextColor(textColor);
+
+        btnPlayPause.setColorFilter(textColor);
+        btnNext.setColorFilter(textColor);
+        btnPrevious.setColorFilter(textColor);
+    }
+
     private void startSleepTimer() {
         countDownTimer = new CountDownTimer(timeLeftInMillis, 1000) {
             @Override
@@ -289,18 +350,6 @@ public class PlayerActivity extends AppCompatActivity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {}
         });
-    }
-
-    private void updateBackgroundColorFromAlbumCover() {
-        Bitmap albumCoverBitmap = ((BitmapDrawable) imgAlbumCover.getDrawable()).getBitmap();
-        if (albumCoverBitmap != null) {
-            Palette.from(albumCoverBitmap).generate(palette -> {
-                if (palette != null) {
-                    int dominantColor = palette.getDominantColor(Color.BLACK);
-                    scrollView.setBackgroundColor(dominantColor);
-                }
-            });
-        }
     }
 
     private String formatTime(int timeInMillis) {

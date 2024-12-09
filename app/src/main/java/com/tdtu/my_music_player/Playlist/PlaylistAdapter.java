@@ -18,7 +18,7 @@ import java.util.List;
 public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.PlaylistViewHolder> {
 
     private final Context context;
-    private final List<Song> playlist; // Corrected to List<Song>
+    private final List<Song> playlist;
     private final OnItemClickListener onItemClickListener;
 
     // Interface for item click listener

@@ -204,10 +204,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void setOnPlayerStatusChangedListener(OnPlayerStatusChangedListener listener) {
-        this.onPlayerStatusChangedListener = listener;
-    }
-
     @Override
     public void onBackPressed() {
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
