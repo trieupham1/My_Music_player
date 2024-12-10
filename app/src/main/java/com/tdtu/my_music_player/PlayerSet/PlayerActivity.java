@@ -1,5 +1,8 @@
 package com.tdtu.my_music_player.PlayerSet;
 
+import static androidx.core.content.ContentProviderCompat.requireContext;
+import static java.security.AccessController.getContext;
+
 import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.content.Context;
@@ -11,6 +14,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -27,6 +31,7 @@ import com.tdtu.my_music_player.SearchSong.Song;
 import com.tdtu.my_music_player.MediaManager.MediaPlayerManager;
 import com.tdtu.my_music_player.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PlayerActivity extends AppCompatActivity {
@@ -42,6 +47,7 @@ public class PlayerActivity extends AppCompatActivity {
     private CountDownTimer countDownTimer;
     private long timeLeftInMillis = 0;
     private boolean isTimerRunning = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +67,7 @@ public class PlayerActivity extends AppCompatActivity {
         btnPlayPause = findViewById(R.id.btn_play_pause);
         btnNext = findViewById(R.id.btn_next);
         btnPrevious = findViewById(R.id.btn_previous);
-        btnAddToPlaylist = findViewById(R.id.btn_add_to_playlist);
+        Button addToPlaylistButton = findViewById(R.id.btn_add_to_playlist);
         btnStartTimer = findViewById(R.id.btn_start_timer);
         playbackBar = findViewById(R.id.playbackBar);
         volumeBar = findViewById(R.id.volumeBar);
@@ -69,16 +75,19 @@ public class PlayerActivity extends AppCompatActivity {
         imgAlbumCover = findViewById(R.id.img_album_cover);
         scrollView = findViewById(R.id.scrollView);
 
+
         // Initialize Managers
         mediaPlayerManager = MediaPlayerManager.getInstance();
-        playlistManager = PlaylistManager.getInstance(this);
+
         audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 
         // Set button click listeners
         btnPlayPause.setOnClickListener(v -> togglePlayPause());
         btnNext.setOnClickListener(v -> playNextSong());
         btnPrevious.setOnClickListener(v -> playPreviousSong());
-        btnAddToPlaylist.setOnClickListener(v -> addToPlaylist());
+        addToPlaylistButton.setOnClickListener(v -> addToPlaylist());
+
+
 
         setupSleepTimer();
         setupPlaybackBar();
@@ -88,6 +97,9 @@ public class PlayerActivity extends AppCompatActivity {
         updateUI();
         updateBackgroundColorFromAlbumCover();
     }
+
+    private final List<Song> playlistSongs = new ArrayList<>(); // The playlist to store songs
+
 
     private void updateUI() {
         // Update playback bar with the song's total duration and current position
@@ -120,38 +132,32 @@ public class PlayerActivity extends AppCompatActivity {
         }
     }
 
-    private void addToPlaylist() {
-        List<String> playlistNames = playlistManager.getAllPlaylists();
+    public void addToPlaylist() {
+        MediaPlayerManager mediaPlayerManager = MediaPlayerManager.getInstance();
 
-        if (playlistNames.isEmpty()) {
-            Toast.makeText(this, "No playlists available. Create one first.", Toast.LENGTH_SHORT).show();
+        if (mediaPlayerManager == null) {
+            Toast.makeText(this, "No song is currently playing", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        CharSequence[] playlistsArray = playlistNames.toArray(new CharSequence[0]);
+        // Retrieve details of the currently playing song
+        String currentSongTitle = mediaPlayerManager.getCurrentSongTitle();
+        String currentArtistName = mediaPlayerManager.getCurrentArtistName();
+        int currentSongResource = mediaPlayerManager.getCurrentSongResource();
+        int currentAlbumCoverResource = mediaPlayerManager.getCurrentAlbumCoverResource();
 
-        Song currentSong = new Song(
-                mediaPlayerManager.getCurrentSongTitle(),
-                mediaPlayerManager.getCurrentArtistName(),
-                mediaPlayerManager.getCurrentSongResource(),
-                mediaPlayerManager.getCurrentAlbumCoverResource()
-        );
+        PlaylistManager playlistManager = PlaylistManager.getInstance();
 
-        new AlertDialog.Builder(this)
-                .setTitle("Select a Playlist")
-                .setItems(playlistsArray, (dialog, which) -> {
-                    String selectedPlaylist = playlistNames.get(which);
-
-                    if (!playlistManager.isSongInPlaylist(selectedPlaylist, currentSong.getTitle(), currentSong.getArtist())) {
-                        playlistManager.addSongToPlaylist(selectedPlaylist, currentSong);
-                        Toast.makeText(this, "Added to playlist: " + selectedPlaylist, Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(this, "Song already exists in playlist.", Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .setNegativeButton("Cancel", null)
-                .show();
+        // Check if the song is already in the playlist
+        if (playlistManager.isSongInPlaylist(currentSongTitle, currentArtistName)) {
+            Toast.makeText(this, currentSongTitle + " is already in the playlist", Toast.LENGTH_SHORT).show();
+        } else {
+            // Add the song to the playlist
+            playlistManager.addSongToPlaylist(currentSongTitle, currentArtistName, currentSongResource, currentAlbumCoverResource);
+            Toast.makeText(this, currentSongTitle + " added to playlist", Toast.LENGTH_SHORT).show();
+        }
     }
+
 
     private void playNextSong() {
         mediaPlayerManager.playNextSong(this);

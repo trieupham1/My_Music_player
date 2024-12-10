@@ -1,60 +1,22 @@
-<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FF000000">
+    android:padding="16dp">
 
-    <!-- ScrollView for Playlist Names -->
-    <ScrollView
+    <ListView
+        android:id="@+id/playlistListView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="8dp">
+        android:divider="@android:color/black"
+        android:dividerHeight="1dp" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+    <Button
+        android:id="@+id/delete_all_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:text="Delete All"
+        android:backgroundTint="@android:color/holo_red_light"
+        android:textColor="@android:color/white" />
 
-            <!-- Add and Delete Buttons -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="end"
-                android:padding="8dp">
-
-                <Button
-                    android:id="@+id/add_playlist_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Add Playlist"
-                    android:layout_marginEnd="8dp"
-                    android:background="@drawable/rounded_button_background"
-                    android:textColor="@android:color/white" />
-
-                <Button
-                    android:id="@+id/delete_playlist_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Delete Playlist"
-                    android:background="@drawable/rounded_button_background"
-                    android:textColor="@android:color/white" />
-            </LinearLayout>
-
-            <!-- RecyclerView for Playlist Names -->
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/playlistListRecyclerView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="8dp" />
-
-            <!-- RecyclerView for Songs in a Playlist -->
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/playlistRecyclerView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="8dp"
-                android:visibility="gone" />
-        </LinearLayout>
-    </ScrollView>
 </RelativeLayout>
