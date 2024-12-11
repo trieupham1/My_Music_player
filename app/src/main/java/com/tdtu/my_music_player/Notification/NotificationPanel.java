@@ -1,6 +1,5 @@
 package com.tdtu.my_music_player.Notification;
 
-import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -26,7 +25,6 @@ public class NotificationPanel {
     public NotificationPanel(Context context, String songTitle, String artistName, int albumArtResourceId, boolean isPlaying) {
         this.context = context;
 
-        // Create Notification Channel (Android 8.0+)
         createNotificationChannel();
 
         // Build the Notification

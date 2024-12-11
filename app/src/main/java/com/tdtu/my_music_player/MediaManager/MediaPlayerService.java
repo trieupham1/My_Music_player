@@ -29,6 +29,7 @@ public class MediaPlayerService extends Service {
     public void onCreate() {
         super.onCreate();
         createNotificationChannel();
+        MediaPlayerManager.getInstance().addPlaybackStateListener(() -> updateNotification());
     }
 
     @Override
@@ -55,20 +56,27 @@ public class MediaPlayerService extends Service {
         switch (action) {
             case ACTION_PLAY:
                 mediaPlayerManager.resumeSong();
+                startForeground(NOTIFICATION_ID, createNotification(
+                        mediaPlayerManager.getCurrentSongTitle(),
+                        mediaPlayerManager.getCurrentArtistName(),
+                        mediaPlayerManager.getCurrentAlbumCoverResource(),
+                        mediaPlayerManager.isPlaying()
+                ));
                 break;
             case ACTION_PAUSE:
                 mediaPlayerManager.pauseSong();
+                updateNotification();
+                stopForeground(false);
                 break;
             case ACTION_NEXT:
                 mediaPlayerManager.playNextSong(this);
+                updateNotification();
                 break;
             case ACTION_PREVIOUS:
                 mediaPlayerManager.playPreviousSong(this);
+                updateNotification();
                 break;
         }
-
-        // Update the notification with the latest state
-        updateNotification();
     }
 
     private Notification createNotification(String songTitle, String artistName, int albumCoverResourceId, boolean isPlaying) {
@@ -128,18 +136,21 @@ public class MediaPlayerService extends Service {
 
 
     private void updateNotification() {
-        MediaPlayerManager mediaPlayerManager = MediaPlayerManager.getInstance();
-        Notification notification = createNotification(
-                mediaPlayerManager.getCurrentSongTitle(),
-                mediaPlayerManager.getCurrentArtistName(),
-                mediaPlayerManager.getCurrentAlbumCoverResource(),
-                mediaPlayerManager.isPlaying()
-        );
-        NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        if (manager != null) {
-            manager.notify(NOTIFICATION_ID, notification);
-        }
+        new android.os.Handler().postDelayed(() -> {
+            MediaPlayerManager mediaPlayerManager = MediaPlayerManager.getInstance();
+            Notification notification = createNotification(
+                    mediaPlayerManager.getCurrentSongTitle(),
+                    mediaPlayerManager.getCurrentArtistName(),
+                    mediaPlayerManager.getCurrentAlbumCoverResource(),
+                    mediaPlayerManager.isPlaying()
+            );
+            NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            if (manager != null) {
+                manager.notify(NOTIFICATION_ID, notification);
+            }
+        }, 200); // Delay of 200 milliseconds
     }
+
 
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -159,6 +170,10 @@ public class MediaPlayerService extends Service {
     @Override
     public void onDestroy() {
         stopForeground(true);
+        NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        if (manager != null) {
+            manager.cancel(NOTIFICATION_ID);
+        }
         super.onDestroy();
     }
 

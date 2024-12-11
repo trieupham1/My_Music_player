@@ -91,19 +91,31 @@ public class MediaPlayerManager {
             }
         }
 
+        // Update the current song details
         currentSongTitle = songTitle;
         currentArtistName = artistName;
         currentAlbumCoverResource = albumCoverResource;
         currentSongResource = songResource;
 
         try {
+            // Create and start the media player
             mediaPlayer = MediaPlayer.create(context, songResource);
-            mediaPlayer.setOnCompletionListener(mp -> stopSong());
+
+            // Set what happens when the song finishes
+            mediaPlayer.setOnCompletionListener(mp -> {
+                // Automatically play the next song when the current song completes
+                playNextSong(context);
+
+                // Notify listeners of the state change (e.g., MediaPlayerService)
+                notifyPlaybackStateChange();
+            });
+
             mediaPlayer.start();
         } catch (Exception e) {
             e.printStackTrace();
         }
 
+        // Notify listeners of playback state change (e.g., MediaPlayerService for notification updates)
         notifyPlaybackStateChange();
     }
 
@@ -121,15 +133,23 @@ public class MediaPlayerManager {
 
     public void pauseSong() {
         if (mediaPlayer != null && mediaPlayer.isPlaying()) {
-            mediaPlayer.pause();
-            notifyPlaybackStateChange();
+            try {
+                mediaPlayer.pause(); // Pause playback
+                notifyPlaybackStateChange(); // Notify listeners
+            } catch (Exception e) {
+                e.printStackTrace(); // Log any exceptions
+            }
         }
     }
 
     public void resumeSong() {
         if (mediaPlayer != null && !mediaPlayer.isPlaying()) {
-            mediaPlayer.start();
-            notifyPlaybackStateChange();
+            try {
+                mediaPlayer.start(); // Resume playback
+                notifyPlaybackStateChange(); // Notify listeners
+            } catch (Exception e) {
+                e.printStackTrace(); // Log any exceptions
+            }
         }
     }
 
@@ -137,12 +157,14 @@ public class MediaPlayerManager {
         currentSongIndex = (currentSongIndex + 1) % songResources.length;
         playSong(context, songResources[currentSongIndex], songTitles[currentSongIndex],
                 artistNames[currentSongIndex], albumCoverResources[currentSongIndex]);
+        notifyPlaybackStateChange(); // Notify state change
     }
 
     public void playPreviousSong(Context context) {
         currentSongIndex = (currentSongIndex - 1 + songResources.length) % songResources.length;
         playSong(context, songResources[currentSongIndex], songTitles[currentSongIndex],
                 artistNames[currentSongIndex], albumCoverResources[currentSongIndex]);
+        notifyPlaybackStateChange(); // Notify state change
     }
 
     public boolean isPlaying() {
@@ -301,5 +323,8 @@ public class MediaPlayerManager {
 
     public interface PlaybackStateListener {
         void onPlaybackStateChanged();
+    }
+    public void addPlaybackStateListener(PlaybackStateListener listener) {
+        listeners.add(listener);
     }
 }
