@@ -340,8 +340,8 @@ public class PlayerActivity extends AppCompatActivity {
     }
 
     private void setupSpeedControl() {
-        speedBar.setMax(100);
-        speedBar.setProgress(100);
+        speedBar.setMax(300);
+        speedBar.setProgress(130);
         speedBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
