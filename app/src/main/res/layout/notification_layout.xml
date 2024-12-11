@@ -4,7 +4,8 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="8dp"
-    android:background="#FFFFFF">
+    android:background="@color/dark_gray"
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,8 +16,8 @@
         <!-- Album Cover -->
         <ImageView
             android:id="@+id/notification_album_cover"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="60dp"
+            android:layout_height="52dp"
             android:src="@drawable/musiclogo" />
 
         <LinearLayout
@@ -33,7 +34,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Song Title"
-                android:textSize="14sp"
+                android:textSize="18sp"
                 android:textStyle="bold"
                 android:textColor="#000" />
 
@@ -43,33 +44,34 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Artist Name"
-                android:textSize="12sp"
-                android:textColor="#888" />
+                android:textSize="15sp"
+                android:textColor="#000" />
         </LinearLayout>
 
         <!-- Playback Controls -->
         <ImageButton
             android:id="@+id/notification_prev_button"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:src="@drawable/ic_previous"
-            android:contentDescription="Previous" />
+            android:contentDescription="Previous"
+            android:background="@android:color/transparent" />
 
         <ImageButton
             android:id="@+id/notification_play_pause_button"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="34dp"
+            android:layout_height="34dp"
+            android:contentDescription="Play/Pause"
             android:src="@drawable/ic_play"
-            android:contentDescription="Play/Pause" />
+            android:background="@android:color/transparent" />
 
         <ImageButton
             android:id="@+id/notification_next_button"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:src="@drawable/ic_next"
-            android:contentDescription="Next" />
+            android:contentDescription="Next"
+            android:background="@android:color/transparent" />
     </LinearLayout>
-
-
 
 </LinearLayout>
