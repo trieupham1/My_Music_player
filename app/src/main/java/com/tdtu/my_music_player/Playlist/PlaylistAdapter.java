@@ -5,8 +5,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.tdtu.my_music_player.R;
 import com.tdtu.my_music_player.SearchSong.Song;
@@ -51,11 +53,24 @@ public class PlaylistAdapter extends BaseAdapter {
         TextView title = convertView.findViewById(R.id.song_title);
         TextView artist = convertView.findViewById(R.id.song_artist);
         ImageView albumCover = convertView.findViewById(R.id.album_cover);
+        Button deleteButton = convertView.findViewById(R.id.delete_button);
 
-        // Bind song data to the views
+// Bind song data to the views
         title.setText(song.getTitle());
         artist.setText(song.getArtist());
         albumCover.setImageResource(song.getAlbumCoverResource());
+
+        // Set up the delete button click listener
+        deleteButton.setOnClickListener(v -> {
+            // Remove the song from the playlist
+            PlaylistManager.getInstance().getPlaylist().remove(position);
+
+            // Notify the adapter to refresh the list
+            notifyDataSetChanged();
+
+            // Show a Toast message
+            Toast.makeText(context, song.getTitle() + " removed from playlist", Toast.LENGTH_SHORT).show();
+        });
 
         return convertView;
     }
