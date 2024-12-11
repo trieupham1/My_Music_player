@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.tdtu.my_music_player.PlayerSet.MainActivity;
 import com.tdtu.my_music_player.MediaManager.MediaPlayerManager;
 import com.tdtu.my_music_player.R;
 import com.tdtu.my_music_player.SearchSong.Song;
@@ -23,7 +24,6 @@ public class PlaylistFragment extends Fragment {
     private ListView playlistListView;
     private List<Song> playlist;
     private PlaylistAdapter playlistAdapter;
-    private MediaPlayerManager mediaPlayerManager;
 
     @Nullable
     @Override
@@ -31,9 +31,7 @@ public class PlaylistFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_playlist, container, false);
 
         playlistListView = view.findViewById(R.id.playlistListView);
-
         Button deleteAllButton = view.findViewById(R.id.delete_all_button);
-
 
         // Initialize the playlist
         playlist = PlaylistManager.getInstance().getPlaylist();
@@ -42,24 +40,24 @@ public class PlaylistFragment extends Fragment {
         playlistAdapter = new PlaylistAdapter(requireContext(), playlist);
         playlistListView.setAdapter(playlistAdapter);
 
-        // Initialize MediaPlayerManager
-        mediaPlayerManager = MediaPlayerManager.getInstance();
-
         // Set the onItemClickListener to play the selected song
         playlistListView.setOnItemClickListener((parent, view1, position, id) -> {
             Song selectedSong = playlist.get(position); // Get the selected song
 
-            // Play the selected song
-            mediaPlayerManager.playSong(
-                    requireContext(),
-                    selectedSong.getResource(),
-                    selectedSong.getTitle(),
-                    selectedSong.getArtist(),
-                    selectedSong.getAlbumCoverResource()
-            );
+            // Play the selected song and update the mini-player
+            MainActivity mainActivity = (MainActivity) getActivity();
+            if (mainActivity != null) {
+                mainActivity.playSelectedSong(
+                        selectedSong.getTitle(),
+                        selectedSong.getArtist(),
+                        selectedSong.getResource(),
+                        selectedSong.getAlbumCoverResource()
+                );
+            }
 
             Toast.makeText(requireContext(), "Playing: " + selectedSong.getTitle(), Toast.LENGTH_SHORT).show();
         });
+
         // Handle "Delete All" button click
         deleteAllButton.setOnClickListener(v -> {
             if (playlist.isEmpty()) {
@@ -72,7 +70,6 @@ public class PlaylistFragment extends Fragment {
             playlistAdapter.notifyDataSetChanged(); // Refresh the ListView
             Toast.makeText(requireContext(), "All songs deleted from the playlist.", Toast.LENGTH_SHORT).show();
         });
-
 
         return view;
     }

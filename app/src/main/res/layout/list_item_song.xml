@@ -36,4 +36,15 @@
             android:ellipsize="end"
             android:maxLines="1" />
     </LinearLayout>
+
+    <!-- Add a Delete Button -->
+    <Button
+        android:id="@+id/delete_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Delete"
+        android:backgroundTint="@android:color/holo_red_light"
+        android:textColor="@android:color/white"
+        android:focusable="false"
+        android:focusableInTouchMode="false" />
 </LinearLayout>
